@@ -51,12 +51,22 @@ class _CartScreenState extends State<CartScreen> {
           value.quantity;
     });
     return cartItemsList.isEmpty
-        ? const EmptyScreen(
-            title: 'Your cart is empty',
-            subtitle: 'Add something and make me happy :)',
-            buttonText: 'Shop now',
-            imagePath: 'assets/images/cart.png',
-          )
+        ? Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: primary,
+
+        title: const Text("",style: TextStyle(
+            fontWeight: FontWeight.bold,color: Colors.white)),
+      ),
+      body: const EmptyScreen(
+        title: 'Your cart is empty',
+        subtitle: 'Add something and make me happy :)',
+        buttonText: 'Shop now',
+        imagePath: 'assets/images/cart.png',
+      ),
+    )
+
         : Scaffold(
             appBar: AppBar(
                 automaticallyImplyLeading: false,

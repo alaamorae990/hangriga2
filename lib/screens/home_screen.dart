@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
@@ -8,15 +9,19 @@ import '../consts/contss.dart';
 import '../consts/theme_data.dart';
 import '../inner_screens/feeds_screen.dart';
 import '../inner_screens/on_sale_screen.dart';
+import '../inner_screens/search_screen.dart';
 import '../models/products_model.dart';
 import '../models/res_model.dart';
+import '../providers/cart_provider.dart';
 import '../providers/products_provider.dart';
 import '../services/global_methods.dart';
 import '../services/utils.dart';
+import '../widgets/empty_products_widget.dart';
 import '../widgets/feed_items.dart';
 import '../widgets/on_sale_res_widget.dart';
 import '../widgets/on_sale_widget.dart';
 import '../widgets/text_widget.dart';
+import 'cart/cart_screen.dart';
 import 'categories.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,14 +32,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController? _searchTextController = TextEditingController();
+  final FocusNode _searchTextFocusNode = FocusNode();
+  String searchQuery = '';
+  @override
+  void dispose() {
+    _searchTextController!.dispose();
+    _searchTextFocusNode.dispose();
+    super.dispose();
+  }
+  List<ProductModel> listProdcutSearch = [];
+
+  void nextPage(){
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchResultPage(searchQuery: searchQuery),
+      ),
+    );
+    return ;
+  }
   @override
   Widget build(BuildContext context) {
+
+
     final Utils utils = Utils(context);
     final themeState = utils.getTheme;
     final Color color = Utils(context).color;
     Size size = utils.getScreenSize;
     final productProviders = Provider.of<ProductsProvider>(context);
     List<ProductModel> allProducts = productProviders.getProducts;
+
     List<ProductModel> productsOnSale = productProviders.getOnSaleProducts;
     List<ResModel> resOnSale = productProviders.getOnSaleRes;
     return Scaffold(
@@ -43,14 +72,99 @@ class _HomeScreenState extends State<HomeScreen> {
           fontWeight: FontWeight.bold
         )),
         backgroundColor: primary,
+        actions: [
 
+          IconButton(
+            icon:Consumer<CartProvider>(builder: (_, myCart, ch) {
+
+            return Badge(
+            toAnimate: true,
+            shape: BadgeShape.circle,
+            badgeColor: Colors.blue,
+            borderRadius: BorderRadius.circular(8),
+            position: BadgePosition.topEnd(top: -7, end: -7),
+            badgeContent: FittedBox(
+            child: TextWidget(
+            text: myCart.getCartItems.length.toString(),
+            color: Colors.white,
+            textSize: 15)),
+            child: Icon(
+           IconlyBold.buy ),);
+            }),
+
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CartScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
 
           children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: kBottomNavigationBarHeight,
+                child:
+                TextField(
+                  focusNode: _searchTextFocusNode,
+                  onEditingComplete:(){
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchResultPage(searchQuery: searchQuery),
+                    ),
+                  );
+                    },
+                  controller: _searchTextController,
+                  onChanged: (value) {
+                    setState(() {
+                      searchQuery = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                      const BorderSide(color: Colors.red, width: 1),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide:
+                      const BorderSide(color: primary, width: 1),
+                    ),
+                    hintText: "What's in your mind",
+                    prefixIcon: const Icon(Icons.search),
+                    suffix: IconButton(
+                      onPressed: () {
+                        _searchTextController!.clear();
+                        _searchTextFocusNode.unfocus();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SearchResultPage(searchQuery: searchQuery),
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.arrow_forward,
+                        color: _searchTextFocusNode.hasFocus ? Colors.red : color,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             Container(
-              height: 200.0, // set the height of the container as per your requirement
+              height: 200.0,
+              color: primary.withOpacity(0.8),// set the height of the container as per your requirement
               child: Row(
                 children: [
                   // Vertical image on the left
@@ -58,9 +172,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     margin: EdgeInsets.all(5.0),
                     width: 100.0,
                     height: double.infinity,// set the width of the container as per your requirement
-                    child: Image.asset(
-                      'assets/images/2.jpg',
-                      fit: BoxFit.cover,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.asset(
+                        'assets/images/5.jpg',
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   // Two square images on the right
@@ -71,9 +188,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Container(
                             margin: EdgeInsets.all(5.0),
                             width: double.infinity,// add margin as per your requirement
-                            child: Image.asset(
-                              'assets/images/6.jpg',
-                              fit: BoxFit.fitWidth,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.asset(
+                                'assets/images/6.jpg',
+                                fit: BoxFit.fitWidth,
+                              ),
                             ),
                           ),
                         ),
@@ -81,9 +201,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Container(
                             margin: EdgeInsets.all(5.0),
                             width: double.infinity,// add margin as per your requirement
-                            child: Image.asset(
-                              'assets/images/5.jpg',
-                              fit: BoxFit.fitWidth,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.0),
+                              child: Image.asset(
+                                'assets/images/5.jpg',
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),
@@ -93,39 +216,58 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 10,),
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child:   Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+            Container(
+              color: Colors.white.withOpacity(0.8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Dina dagliga erbjudandem",
-                    textAlign: TextAlign.start,
+                  SizedBox(height: 10,),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child:   Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text("Dina dagliga erbjudandem",
+                          textAlign: TextAlign.start,
 
-                    style: TextStyle(
-                    fontWeight: FontWeight.bold,fontSize: 20
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,fontSize: 20
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  ),
+                  SizedBox(height: 15,),
                 ],
               ),
-    ),
-            SizedBox(height: 15,),
+            ),
+
             SizedBox(
               height: size.height * 0.38,
-              child: Swiper(
-                itemBuilder: (BuildContext context, int index) {
-                  return Image.asset(
-                    Constss.offerImages[index],
-                    fit: BoxFit.fill,
-                  );
-                },
-                autoplay: true,
-                itemCount: Constss.offerImages.length,
-                pagination: const SwiperPagination(
-                    alignment: Alignment.bottomCenter,
-                    builder: DotSwiperPaginationBuilder(
-                        color: Colors.white, activeColor: Colors.red)),
-                // control: const SwiperControl(color: Colors.black),
+
+              child: Container(
+                color:  Colors.white.withOpacity(0.8),
+                child: Swiper(
+
+                  itemBuilder: (BuildContext context, int index) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(50.0),
+                      child: Image.asset(
+                        Constss.offerImages[index],
+                        fit: BoxFit.cover,
+
+
+                      ),
+                    );
+                  },
+                  autoplay: true,
+                  itemCount: Constss.offerImages.length,
+                  pagination: const SwiperPagination(
+                      alignment: Alignment.bottomCenter,
+                      builder: DotSwiperPaginationBuilder(
+                          color: Colors.white, activeColor: Colors.red)),
+                  // control: const SwiperControl(color: Colors.black),
+                ),
               ),
             ),
             const SizedBox(

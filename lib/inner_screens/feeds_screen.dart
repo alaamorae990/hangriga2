@@ -61,7 +61,8 @@ class _FeedsScreenState extends State<FeedsScreen> {
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
               height: kBottomNavigationBarHeight,
-              child: TextField(
+              child:
+              TextField(
                 focusNode: _searchTextFocusNode,
                 controller: _searchTextController,
                 onChanged: (valuee) {
@@ -99,7 +100,8 @@ class _FeedsScreenState extends State<FeedsScreen> {
           _searchTextController!.text.isNotEmpty && listProdcutSearch.isEmpty
               ? const EmptyProdWidget(
                   text: 'No products found, please try another keyword')
-              : GridView.count(
+              :
+          GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,

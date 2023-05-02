@@ -93,6 +93,10 @@ class ProductsProvider with ChangeNotifier {
               title: element.get('title'),
               imageUrl: element.get('imageUrl'),
               isOnSale: element.get('isOnSale'),
+              delievryCost: element.get('delievryCost'),
+              hourTime: element.get('hourTime'),
+              rankStar: element.get('rankStar'),
+
             ));
       });
     });
@@ -121,6 +125,16 @@ class ProductsProvider with ChangeNotifier {
               isOnSale: element.get('isOnSale'),
               isPiece: element.get('isPiece'),
               detiles: element.get("title"),
+              extra1:element.get("extra1"),
+              extra2:element.get("extra2"),
+              extra3:element.get("extra3"),
+              extra4:element.get("extra4"),
+              extra5:element.get("extra5"),
+              extra6:element.get("extra6"),
+              extra7:element.get("extra7"),
+              extra8:element.get("extra8"),
+              extra9:element.get("extra9"),
+              extra10:element.get("extra10"),
             ));
       });
     });

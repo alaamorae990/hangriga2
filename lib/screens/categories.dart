@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,75 +49,149 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           var data = snapshots.data!.docs[index].data()
                           as Map<String, dynamic>;
                           return
-                          Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 10,
-      ),
-      height: 190.0,
-      child: InkWell(
-        onTap: (){
-                  Navigator.pushNamed(context, CategoryScreen.routeName,
-             arguments: data['title']);
-        },
-        child:
-         Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              height: 160.0,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(22),
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                        offset: Offset(0, 15),
-                        blurRadius: 25,
-                        color: Colors.black12),
-                  ]),
-            ),
-            Positioned(
-              top: 0.0,
-              left: 0.0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(11.0),
-                child: Image.network(
-                  snapshots.data!.docs[index]['imageUrl'],
-                     height: 150.0,
-                      width: 150.0,
-                   fit: BoxFit.fill,
+              Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
                 ),
-              ),
-            ),
-            Positioned(
-                bottom: 0.0,
-                right: 0.0,
-                child: SizedBox(
-                  height: 136.0,
-                  width: size.width - 200,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                height: MediaQuery.of(context).size.width * 0.7,
+                child: InkWell(
+                  onTap: (){
+                    Navigator.pushNamed(context, CategoryScreen.routeName,
+                        arguments: data['title']);
+                  },
+                  child: Stack(
                     children: [
-                     
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8),
-                        child: TextWidget(
-                          text: snapshots.data!.docs[index]['title'],
-                          textSize: 26,
-                          color: Colors.black,
-                          isTitle: true,
-                        
+                      Container(
+                        width: double.infinity,
+
+                        height: MediaQuery.of(context).size.width * 0.7,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(22),
+                          color: Colors.white,
+                          boxShadow: const [
+                            BoxShadow(
+                                offset: Offset(0, 15),
+                                blurRadius: 25,
+                                color: Colors.black12),
+                          ],
                         ),
                       ),
-                      
+                      Column(
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: Stack(
+                              children: [
+                                FractionallySizedBox(
+                                  widthFactor: 1.0,
+                                  heightFactor: 1.6,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    child: ColorFiltered(
+                                      colorFilter: ColorFilter.mode(
+                                        Colors.black.withOpacity(0.3),
+                                        BlendMode.darken,
+                                      ),
+                                      child: Image.network(
+                                        snapshots.data!.docs[index]['imageUrl'],
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned.fill(
+                                  child: Center(
+                                    child: Text(
+                                      snapshots.data!.docs[index]['hourTime'],
+                                      style: TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 22,),
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                                children: [
+                                  Flexible(
+                                    flex: 10,
+                                    child: Text(snapshots.data!.docs[index]['title'],
+                                      maxLines:2, // set the maximum number of lines
+                                      overflow: TextOverflow.visible,
+                                      textAlign: TextAlign.start,
+                                    style: TextStyle(fontSize:MediaQuery.of(context).size.width * 0.06,
+                                        color:color,
+fontWeight: FontWeight.bold,
+                                    ),
+                                    ),
+                                  ),
+
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(Icons.star, color: Colors.yellow),
+                                        onPressed: () {
+                                          // add your logic here
+                                        },
+                                        tooltip: 'Add',
+
+                                      ),
+                                      Text(snapshots.data!.docs[index]['rankStar']),
+
+                                    ],
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                          ),
+                          // TextWidget(
+                          //   text: snapshots.data!.docs[index]['title'],
+                          //   textSize: MediaQuery.of(context).size.width * 0.06,
+                          //   color: Colors.black,
+                          //   isTitle: true,
+                          // ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Icon(Icons.motorcycle_rounded),
+
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextWidget(
+                                    text: snapshots.data!.docs[index]['delievryCost']+' Kr',
+                                    textSize: MediaQuery.of(context).size.width * 0.06,
+                                    color: Colors.black,
+                                    isTitle: false,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 50,)
+                        ],
+                      ),
                     ],
                   ),
-                ))
-          ],
-        ),
-      ),
-    );
+                ),
+              );
+
+
+
                   }
                 );
           }
