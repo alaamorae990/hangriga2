@@ -21,6 +21,7 @@ import 'package:hangry/screens/payment/swich.dart';
 import 'package:hangry/screens/user.dart';
 import 'package:hangry/screens/viewed_recently/viewed_recently.dart';
 import 'package:hangry/services/location.dart';
+import 'package:hangry/services/my_map.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -172,16 +173,17 @@ class _MyAppState extends State<MyApp> {
                   theme: Styles.themeData(themeProvider.getDarkTheme, context),
                   home:    
                   // MapPage(),
-                  FetchScreen(),
+                  const FetchScreen(),
                   routes: {
                     OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
                     FeedsScreen.routeName: (ctx) => const FeedsScreen(),
-                    ProductDetails.routeName: (ctx) => const ProductDetails(),
+
                     WishlistScreen.routeName: (ctx) => const WishlistScreen(),
                     OrdersScreen.routeName: (ctx) => const OrdersScreen(),
                     ViewedRecentlyScreen.routeName: (ctx) =>
                         const ViewedRecentlyScreen(),
                     RegisterScreen.routeName: (ctx) => const RegisterScreen(),
+
                     LoginScreen.routeName: (ctx) => const LoginScreen(),
                     ForgetPasswordScreen.routeName: (ctx) =>
                         const ForgetPasswordScreen(),

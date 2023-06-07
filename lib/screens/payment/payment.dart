@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hangry/screens/cart/cart_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,39 +15,46 @@ import '../../providers/orders_provider.dart';
 import '../../providers/products_provider.dart';
 import '../../services/global_methods.dart';
 import '../../services/utils.dart';
+import '../cart/cart2/cart_show.dart';
 import '../cart/cart2/cart_show_backup.dart';
 import 'PaypalServices.dart';
+import 'package:location/location.dart' as loc;
 import '../../providers/cart_provider.dart';
-class PaypalPayment extends StatefulWidget {
+
+class PaypalPaymentBackUp extends StatefulWidget {
   final Function onFinish;
-final double total;
-  final String details;
-  PaypalPayment({required this.onFinish, required this.total, required this.details});
+  final double total,mous;
+final String totalFood;
+  final String detiles,time;
+  PaypalPaymentBackUp({required this.onFinish, required this.total, required this.detiles, required this.time, required this.mous, required this.totalFood});
 
   @override
   State<StatefulWidget> createState() {
-    
-    return PaypalPaymentState();
+    return PaypalPaymentBackUpState();
   }
 }
 
-class PaypalPaymentState extends State<PaypalPayment> {
-  
+class PaypalPaymentBackUpState extends State<PaypalPaymentBackUp> {
+  DateTime? selectedTime;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-   String? checkoutUrl;
-   String? executeUrl;
-   String? accessToken;
+  String? checkoutUrl;
+  String? executeUrl;
+  String? accessToken;
   PaypalServices services = PaypalServices();
 
   // you can change default currency according to your need
-  Map<dynamic,dynamic> defaultCurrency = {"symbol": "SEK ", "decimalDigits": 2, "symbolBeforeTheNumber": true, "currency": "SEK"};
+  Map<dynamic, dynamic> defaultCurrency = {
+    "symbol": "SEK ",
+    "decimalDigits": 2,
+    "symbolBeforeTheNumber": true,
+    "currency": "SEK"
+  };
 
   bool isEnableShipping = false;
   bool isEnableAddress = false;
 
   String returnURL = 'return.example.com';
-  String cancelURL= 'cancel.example.com';
-
+  String cancelURL = 'cancel.example.com';
 
   @override
   void initState() {
@@ -58,7 +66,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
 
         final transactions = getOrderParams();
         final res =
-            await services.createPaypalPayment(transactions, accessToken);
+        await services.createPaypalPayment(transactions, accessToken);
         if (res != null) {
           setState(() {
             checkoutUrl = res["approvalUrl"];
@@ -66,7 +74,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
           });
         }
       } catch (e) {
-        print('exception: '+e.toString());
+        print('exception: ' + e.toString());
         final snackBar = SnackBar(
           content: Text(e.toString()),
           duration: Duration(seconds: 10),
@@ -97,7 +105,6 @@ class PaypalPaymentState extends State<PaypalPayment> {
       }
     ];
 
-
     // checkout invoice details
     String totalAmount = widget.total.toString();
     String subTotalAmount = widget.total.toString();
@@ -123,8 +130,7 @@ class PaypalPaymentState extends State<PaypalPayment> {
             "details": {
               "subtotal": subTotalAmount,
               "shipping": shippingCost,
-              "shipping_discount":
-                  ((-1.0) * shippingDiscountCost).toString()
+              "shipping_discount": ((-1.0) * shippingDiscountCost).toString()
             }
           },
           "description": "The payment transaction description.",
@@ -133,12 +139,9 @@ class PaypalPaymentState extends State<PaypalPayment> {
           },
           "item_list": {
             "items": items,
-            if (isEnableShipping &&
-                isEnableAddress)
+            if (isEnableShipping && isEnableAddress)
               "shipping_address": {
-                "recipient_name": userFirstName +
-                    " " +
-                    userLastName,
+                "recipient_name": userFirstName + " " + userLastName,
                 "line1": addressStreet,
                 "line2": "",
                 "city": addressCity,
@@ -151,30 +154,24 @@ class PaypalPaymentState extends State<PaypalPayment> {
         }
       ],
       "note_to_payer": "Contact us for any questions on your order.",
-      "redirect_urls": {
-        "return_url": returnURL,
-        "cancel_url": cancelURL
-      }
+      "redirect_urls": {"return_url": returnURL, "cancel_url": cancelURL}
     };
     return temp;
   }
 
   @override
   Widget build(BuildContext context) {
-    print(checkoutUrl);
+
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
-   
+
     final cartProvider = Provider.of<CartProvider>(context);
     final productProvider = Provider.of<ProductsProvider>(context);
     final ordersProvider = Provider.of<OrdersProvider>(context);
     double total = 0.0;
     cartProvider.getCartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findProdById(value.productId);
-      total += (getCurrProduct.isOnSale
-              ? getCurrProduct.salePrice
-              : getCurrProduct.price) *
-          value.quantity;
+      total += value.totalPrice;
     });
     if (checkoutUrl != null) {
       return Scaffold(
@@ -197,78 +194,21 @@ class PaypalPaymentState extends State<PaypalPayment> {
                     .executePayment(executeUrl, payerID, accessToken)
                     .then((id) {
                   widget.onFinish(id);
-                   
                 });
               } else {
                 Navigator.of(context).pop();
               }
-                                       Navigator.push(
-                         context,
-                         MaterialPageRoute(builder: (context) =>  CartShowBackup(
-                          detiles: widget.details,
-                         )),
-                                   );
-                    //      User? user = authInstance.currentUser;
-                    // final orderId = const Uuid().v4();
-                    // final productProvider =
-                    //     Provider.of<ProductsProvider>(context, listen: false);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  CartShowBackup(
+                  mous: widget.mous,
+                  totalFood: widget.totalFood,
+                  time:widget.time,
+                  detiles: widget.detiles,
 
-                    // cartProvider.getCartItems.forEach((key, value) async {
-                    //   final getCurrProduct = productProvider.findProdById(
-                    //     value.productId,
-                    //   );
 
-                      // try {
-                      //   // final loc.LocationData _locationResult = await location.getLocation();
-
-                      //   final DocumentSnapshot userDoc = await FirebaseFirestore
-                      //       .instance
-                      //       .collection('users')
-                      //       .doc(user!.uid)
-                      //       .get();
-                      //   phoneNumber = userDoc.get('phoneNumber');
-                      //   await FirebaseFirestore.instance
-                      //       .collection('ordersBackup')
-                      //       .doc(orderId)
-                      //       .set({
-                      //     'orderId': orderId,
-                      //     'userId': user.uid,
-                      //     'productId': value.productId,
-                      //     'price': (getCurrProduct.isOnSale
-                      //             ? getCurrProduct.salePrice
-                      //             : getCurrProduct.price) *
-                      //         value.quantity,
-                      //     'totalPrice': widget.total,
-                      //     'quantity': value.quantity,
-                      //     'imageUrl': getCurrProduct.imageUrl,
-                      //     'userName': user.displayName,
-                      //     // 'latitude': _locationResult.latitude,
-                      //     // 'longitude': _locationResult.longitude,
-                      //     'orderDate': Timestamp.now(),
-                      //     'phoneNumber': phoneNumber,
-                      //     'productCategoryName':
-                      //         getCurrProduct.productCategoryName,
-                      //     'title': getCurrProduct.title,
-                      //   });
-                      //   //payment fun is here without delivery
-                      //   await cartProvider.clearOnlineCart();
-                      //   cartProvider.clearLocalCart();
-                      //   ordersProvider.fetchOrders();
-                      //   await Fluttertoast.showToast(
-                      //     msg:
-                      //         "Du kan gå till restaurangen och hämta din leverans ",
-                      //     toastLength: Toast.LENGTH_LONG,
-                      //     gravity: ToastGravity.CENTER,
-                      //   );
-                      //    Navigator.push(
-                      //    context,
-                      //    MaterialPageRoute(builder: (context) => const FetchScreen()),
-                      //              );
-                      // } catch (error) {
-                      //   GlobalMethods.errorDialog(
-                      //       subtitle: error.toString(), context: context);
-                      // } finally {}
-                    // });
+                )),
+              );
             }
             if (request.url.contains(cancelURL)) {
               Navigator.of(context).pop();

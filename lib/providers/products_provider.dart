@@ -90,12 +90,44 @@ class ProductsProvider with ChangeNotifier {
         _resturantsList.insert(
             0,
             ResModel(
+              startTime: element.get('StartTime'),
+              endTime: element.get('EndTime'),
               title: element.get('title'),
               imageUrl: element.get('imageUrl'),
               isOnSale: element.get('isOnSale'),
               delievryCost: element.get('delievryCost'),
               hourTime: element.get('hourTime'),
               rankStar: element.get('rankStar'),
+              drink1: element.get('drink1'),
+              drink2: element.get('drink2'),
+              drink3: element.get('drink3'),
+              drink4: element.get('drink4'),
+              drink5: element.get('drink5'),
+              drink6: element.get('drink6'),
+              drink7: element.get('drink7'),
+              drink8: element.get('drink8'),
+              drink9: element.get('drink9'),
+              drink10: element.get('drink10'),
+              price1: element.get('price1'),
+              price2: element.get('price2'),
+              price3: element.get('price3'),
+              price4: element.get('price4'),
+              price5: element.get('price5'),
+              price6: element.get('price6'),
+              price7: element.get('price7'),
+              price8: element.get('price8'),
+              price9: element.get('price9'),
+              price10: element.get('price10'),
+              imagedrink1: element.get('imagedrink1'),
+              imagedrink2: element.get('imagedrink2'),
+              imagedrink3: element.get('imagedrink3'),
+              imagedrink4: element.get('imagedrink4'),
+              imagedrink5: element.get('imagedrink5'),
+              imagedrink6: element.get('imagedrink6'),
+              imagedrink7: element.get('imagedrink7'),
+              imagedrink8: element.get('imagedrink8'),
+              imagedrink9: element.get('imagedrink9'),
+              imagedrink10: element.get('imagedrink10'),
 
             ));
       });
@@ -135,6 +167,17 @@ class ProductsProvider with ChangeNotifier {
               extra8:element.get("extra8"),
               extra9:element.get("extra9"),
               extra10:element.get("extra10"),
+              price1: element.get("price1"),
+              price2: element.get("price2"),
+              price3: element.get("price3"),
+              price4: element.get("price4"),
+              price5: element.get("price5"),
+              price6: element.get("price6"),
+              price7: element.get("price7"),
+              price8: element.get("price8"),
+              price9: element.get("price9"),
+              price10: element.get("price10"),
+
             ));
       });
     });
@@ -144,7 +187,14 @@ class ProductsProvider with ChangeNotifier {
   ProductModel findProdById(String productId) {
     return _productsList.firstWhere((element) => element.id == productId);
   }
-
+  List<ResModel> findDrinkByCategory(String categoryName) {
+    List<ResModel> _category3List = _resturantsList
+        .where((element) => element.title
+        .toLowerCase()
+        .contains(categoryName.toLowerCase()))
+        .toList();
+    return _category3List;
+  }
   List<ProductModel> findByCategory(String categoryName) {
     List<ProductModel> _categoryList = _productsList
         .where((element) => element.productCategoryName

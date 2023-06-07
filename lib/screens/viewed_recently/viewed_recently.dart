@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:hangry/consts/theme_data.dart';
 
 import 'package:provider/provider.dart';
 
@@ -33,11 +34,26 @@ class _ViewedRecentlyScreenState extends State<ViewedRecentlyScreen> {
         .reversed
         .toList();
     if (viewedProdItemsList.isEmpty) {
-      return const EmptyScreen(
-        title: 'Your history is empty',
-        subtitle: 'No products has been viewed yet!',
-        buttonText: 'Shop now',
-        imagePath: 'assets/images/history.png',
+      return Scaffold(
+        appBar: AppBar(
+
+          leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+          backgroundColor: primary,
+        ),
+        body: const EmptyScreen(
+          //Your history is empty
+          title: 'Din historik är tom',
+          //No order has been viewed yet!
+          subtitle: 'Ingen beställning har visats ännu!',
+          //Shop now
+          buttonText: 'Shoppa nu',
+          imagePath: 'assets/images/history.png',
+        ),
       );
     } else {
       return Scaffold(
@@ -46,9 +62,14 @@ class _ViewedRecentlyScreenState extends State<ViewedRecentlyScreen> {
             IconButton(
               onPressed: () {
                 GlobalMethods.warningDialog(
-                    title: 'Empty your history?',
-                    subtitle: 'Are you sure?',
-                    fct: () {},
+                  //Empty your history?
+                    title: 'Töm din historia?',
+                    //Are you sure?
+                    subtitle: 'Är du säker?',
+                    fct: () {
+
+                     viewedProdProvider.clearHistory();
+                    },
                     context: context);
               },
               icon: Icon(
@@ -62,7 +83,8 @@ class _ViewedRecentlyScreenState extends State<ViewedRecentlyScreen> {
           elevation: 0,
           centerTitle: true,
           title: TextWidget(
-            text: 'History',
+            //History
+            text: 'Historia',
             color: color,
             textSize: 24.0,
           ),

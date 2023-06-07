@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hangry/consts/theme_data.dart';
 import 'package:hangry/screens/cart/backup_del_.dart';
 import 'package:hangry/widgets/auth_button.dart';
@@ -17,13 +18,18 @@ import '../../../services/global_methods.dart';
 import '../../../services/utils.dart';
 import '../../../widgets/empty_screen.dart';
 import '../../../widgets/text_widget.dart';
+import 'cart_show_backup_widget.dart';
 import 'cart_show_widger.dart';
 
 import 'package:location/location.dart' as loc;
 
 class CartShow extends StatefulWidget {
-  const CartShow({Key? key, required this.detiles}) : super(key: key);
-final String detiles;
+  const CartShow({Key? key, required this.detiles, required this.time,  this.addrees,  this.selectedLocation, required this.mous, required this.delevryFee, required this.totalFood}) : super(key: key);
+  final String detiles,totalFood;
+  final double mous,delevryFee;
+  final String? addrees;
+  final String time;
+  final LatLng? selectedLocation;
   @override
   State<CartShow> createState() => _CartShowState();
 }
@@ -38,215 +44,60 @@ class _CartShowState extends State<CartShow> {
     Size size = Utils(context).getScreenSize;
     final cartProvider = Provider.of<CartProvider>(context);
     final cartItemsList =
-        cartProvider.getCartItems.values.toList().reversed.toList();
+    cartProvider.getCartItems.values.toList().reversed.toList();
     final productProvider = Provider.of<ProductsProvider>(context);
     final ordersProvider = Provider.of<OrdersProvider>(context);
     double total = 0.0;
     cartProvider.getCartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findProdById(value.productId);
       total += (getCurrProduct.isOnSale
-              ? getCurrProduct.salePrice
-              : getCurrProduct.price) *
+          ? getCurrProduct.salePrice
+          : getCurrProduct.price) *
           value.quantity;
     });
     return cartItemsList.isEmpty
         ? const EmptyScreen(
-            title: 'Your cart is empty',
-            subtitle: 'Add something and make me happy :)',
-            buttonText: 'Shop now',
-            imagePath: 'assets/images/cart.png',
-          )
+      title: 'Your cart is empty',
+      subtitle: 'Add something and make me happy :)',
+      buttonText: 'Shop now',
+      imagePath: 'assets/images/cart.png',
+    )
         : Scaffold(
-            body: Column(
-              children: [
-                // _checkout(ctx: context),
-                Expanded(
-                  child: SizedBox(
-                    height: 200.0,
-                    child: ListView.builder(
-                    
-                      itemCount: cartItemsList.length,
-                      itemBuilder: (ctx, index) {
-                        return ChangeNotifierProvider.value(
-                            value: cartItemsList[index],
-                            child: CartShowWidget(
-                              q: cartItemsList[index].quantity,
-                              details: widget.detiles,
+      appBar: AppBar(
+        backgroundColor: primary,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),),
+      body: Column(
+        children: [
+          // _checkout(ctx: context),
+          Expanded(
+            flex: 1,
+            child: ListView.builder(
 
-                            ));
-                      },
-                    ),
-                  ),
-                ),
-              ],
+              itemCount: cartItemsList.length,
+              itemBuilder: (ctx, index) {
+                return ChangeNotifierProvider.value(
+                    value: cartItemsList[index],
+                    child: CartShowWidget(
+                      totalFood:widget.totalFood,
+                      delevryFee: widget.delevryFee,
+                      mous: widget.mous,
+                      addrees:widget.addrees.toString() ,
+                      q: cartItemsList[index].quantity,
+                      details: widget.detiles,
+                      time:widget.time,
+                      selectedLocation: widget.selectedLocation,
+                    ));
+              },
             ),
-          );
+          ),
+        ],
+      ),
+    );
   }
 
-//                     GlobalMethods.navigateTo(
-  // ctx: context, routeName: makePayment.routeName);
-  // Widget _checkout({required BuildContext ctx}) {
-  //   final Color color = Utils(ctx).color;
-  //   Size size = Utils(ctx).getScreenSize;
-  //   final cartProvider = Provider.of<CartProvider>(ctx);
-  //   final productProvider = Provider.of<ProductsProvider>(ctx);
-  //   final ordersProvider = Provider.of<OrdersProvider>(ctx);
-  //   double total = 0.0;
-  //   cartProvider.getCartItems.forEach((key, value) {
-  //     final getCurrProduct = productProvider.findProdById(value.productId);
-  //     total += (getCurrProduct.isOnSale
-  //             ? getCurrProduct.salePrice
-  //             : getCurrProduct.price) *
-  //         value.quantity;
-  //   });
-  //   return SizedBox(
-  //     width: double.infinity,
-  //     height: size.height * 0.1,
-  //     // color: ,
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(horizontal: 12),
-  //       child: Row(children: [
-  //         Material(
-  //           color: Colors.green,
-  //           borderRadius: BorderRadius.circular(10),
-  //           child: InkWell(
-  //             borderRadius: BorderRadius.circular(10),
-  //             onTap: ()
-
-  //              async {
-  //                   GlobalMethods.DeliveryOrBackup(
-  //                     title: 'Do you want us tp delivery or you well take your meal by yourself?',
-  //                     subtitle: 'choose one!',
-  //                     fct2: () async {
-  //               User? user = authInstance.currentUser;
-  //               final orderId = const Uuid().v4();
-  //               final productProvider =
-  //                   Provider.of<ProductsProvider>(ctx, listen: false);
-
-  //               cartProvider.getCartItems.forEach((key, value) async {
-  //                 final getCurrProduct = productProvider.findProdById(
-  //                   value.productId,
-  //                 );
-  //                  final loc.LocationData _locationResult = await location.getLocation();
-
-  //                 try {
-
-  //                 final DocumentSnapshot userDoc =  await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
-  //                   phoneNumber = userDoc.get('phoneNumber');
-  //                   await FirebaseFirestore.instance
-  //                       .collection('orders')
-  //                       .doc(orderId)
-  //                       .set({
-  //                     'orderId': orderId,
-  //                     'userId': user.uid,
-  //                     'productId': value.productId,
-  //                     'price': (getCurrProduct.isOnSale
-  //                             ? getCurrProduct.salePrice
-  //                             : getCurrProduct.price) *
-  //                         value.quantity,
-  //                     'totalPrice': total,
-  //                     'quantity': value.quantity,
-  //                     'imageUrl': getCurrProduct.imageUrl,
-  //                     'userName': user.displayName,
-  //                     'latitude': _locationResult.latitude,
-  //                     'longitude': _locationResult.longitude,
-  //                     'orderDate': Timestamp.now(),
-  //                     'phoneNumber':phoneNumber,
-  //                     'productCategoryName':getCurrProduct.productCategoryName,
-  //                     'title':getCurrProduct.title,
-  //                     'details':getCurrProduct.detiles
-  //                   });
-  //                   //payment fun is here with delivery
-  //                   await cartProvider.clearOnlineCart();
-  //                   cartProvider.clearLocalCart();
-  //                   ordersProvider.fetchOrders();
-  //                   await Fluttertoast.showToast(
-  //                     msg: "Your order has been placed and it need 20 min to be ready",
-  //                     toastLength: Toast.LENGTH_LONG,
-  //                     gravity: ToastGravity.CENTER,
-  //                   );
-  //                 } catch (error) {
-  //                   GlobalMethods.errorDialog(
-  //                       subtitle: error.toString(), context: ctx);
-  //                 } finally {}
-  //               });
-  //               },
-  //             fct: ()async{
-  //               User? user = authInstance.currentUser;
-  //               final orderId = const Uuid().v4();
-  //               final productProvider =
-  //                   Provider.of<ProductsProvider>(ctx, listen: false);
-
-  //               cartProvider.getCartItems.forEach((key, value) async {
-  //                 final getCurrProduct = productProvider.findProdById(
-  //                   value.productId,
-  //                 );
-
-  //                 try {
-  //                   // final loc.LocationData _locationResult = await location.getLocation();
-
-  //                 final DocumentSnapshot userDoc =  await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
-  //                   phoneNumber = userDoc.get('phoneNumber');
-  //                   await FirebaseFirestore.instance
-  //                       .collection('ordersBackup')
-  //                       .doc(orderId)
-  //                       .set({
-  //                     'orderId': orderId,
-  //                     'userId': user.uid,
-  //                     'productId': value.productId,
-  //                     'price': (getCurrProduct.isOnSale
-  //                             ? getCurrProduct.salePrice
-  //                             : getCurrProduct.price) *
-  //                         value.quantity,
-  //                     'totalPrice': total,
-  //                     'quantity': value.quantity,
-  //                     'imageUrl': getCurrProduct.imageUrl,
-  //                     'userName': user.displayName,
-  //                     // 'latitude': _locationResult.latitude,
-  //                     // 'longitude': _locationResult.longitude,
-  //                     'orderDate': Timestamp.now(),
-  //                     'phoneNumber':phoneNumber,
-  //                     'productCategoryName':getCurrProduct.productCategoryName,
-  //                     'title':getCurrProduct.title,
-  //                   });
-  //                   //payment fun is here without delivery
-  //                   await cartProvider.clearOnlineCart();
-  //                   cartProvider.clearLocalCart();
-  //                   ordersProvider.fetchOrders();
-  //                   await Fluttertoast.showToast(
-  //                     msg: "You can go to the resturnat and backup your delivery ",
-  //                     toastLength: Toast.LENGTH_LONG,
-  //                     gravity: ToastGravity.CENTER,
-  //                   );
-  //                 } catch (error) {
-  //                   GlobalMethods.errorDialog(
-  //                       subtitle: error.toString(), context: ctx);
-  //                 } finally {}
-  //               });
-  //             },
-  //                context: context, );
-  //             },
-  //             child: Padding(
-  //               padding: const EdgeInsets.all(8.0),
-  //               child: TextWidget(
-  //                 text: 'Order Now',
-  //                 textSize: 20,
-  //                 color: Colors.white,
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         const Spacer(),
-  //         FittedBox(
-  //           child: TextWidget(
-  //             text: 'Total: \$${total.toStringAsFixed(2)}',
-  //             color: color,
-  //             textSize: 18,
-  //             isTitle: true,
-  //           ),
-  //         ),
-  //       ]),
-  //     ),
-  //   );
-  // }
 }

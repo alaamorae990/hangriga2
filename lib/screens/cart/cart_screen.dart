@@ -43,12 +43,11 @@ class _CartScreenState extends State<CartScreen> {
     final productProvider = Provider.of<ProductsProvider>(context);
     final ordersProvider = Provider.of<OrdersProvider>(context);
     double total = 0.0;
+    String extra='';
     cartProvider.getCartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findProdById(value.productId);
-      total += (getCurrProduct.isOnSale
-              ? getCurrProduct.salePrice
-              : getCurrProduct.price) *
-          value.quantity;
+      total += value.totalPrice;
+
     });
     return cartItemsList.isEmpty
         ? Scaffold(
@@ -60,9 +59,12 @@ class _CartScreenState extends State<CartScreen> {
             fontWeight: FontWeight.bold,color: Colors.white)),
       ),
       body: const EmptyScreen(
-        title: 'Your cart is empty',
-        subtitle: 'Add something and make me happy :)',
-        buttonText: 'Shop now',
+        //Your cart is empty
+        title: 'Din varukorg är tom',
+        //Add something and make me happy :)'
+        subtitle: 'Lägg till något och gör mig glad :)',
+        //Shop now
+        buttonText: 'Shoppa nu',
         imagePath: 'assets/images/cart.png',
       ),
     )
@@ -73,7 +75,8 @@ class _CartScreenState extends State<CartScreen> {
                 elevation: 0,
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 title: TextWidget(
-                  text: 'Cart (${cartItemsList.length})',
+                  //Cart
+                  text: 'Vagn (${cartItemsList.length})',
                   color: color,
                   isTitle: true,
                   textSize: 22,
@@ -82,8 +85,10 @@ class _CartScreenState extends State<CartScreen> {
                   IconButton(
                     onPressed: () {
                       GlobalMethods.warningDialog(
-                          title: 'Empty your cart?',
-                          subtitle: 'Are you sure?',
+                        //Empty your cart
+                          title: 'Tömma din varukorg?',
+                          //Are you sure?
+                          subtitle: 'Är du säker?',
                           fct: () async {
                             await cartProvider.clearOnlineCart();
                             cartProvider.clearLocalCart();
@@ -116,7 +121,8 @@ class _CartScreenState extends State<CartScreen> {
                                 ctx: context, routeName: BackupOrDel.routeName);
                           },
                           child: TextWidget(
-                            text: 'Order Now',
+                            //Order Now
+                            text: 'Beställ nu',
                             color: Colors.white,
                             textSize: 18,
                             isTitle: true,

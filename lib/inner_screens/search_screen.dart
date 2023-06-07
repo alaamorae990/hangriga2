@@ -33,7 +33,8 @@ class SearchResultPage extends StatelessWidget {
     // wishlistProvider.getWishlistItems.containsKey(productModel.id);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Results'),
+        //Search Results
+        title: Text('forskningsresultat'),
         backgroundColor: primary,
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -59,7 +60,8 @@ class SearchResultPage extends StatelessWidget {
 
           if (querySnapshot.size == 0) {
             return Center(
-              child: Text('No search results found.'),
+              //No search results found
+              child: Text('Inga sökresultat hittades.'),
             );
           }
 

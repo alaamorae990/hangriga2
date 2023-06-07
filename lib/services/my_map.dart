@@ -1,73 +1,140 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart' as loc;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-class MyMap extends StatefulWidget {
-  final String user_id;
-  MyMap(this.user_id);
-  @override
-  _MyMapState createState() => _MyMapState();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp2());
 }
 
-class _MyMapState extends State<MyMap> {
-  final loc.Location location = loc.Location();
-  late GoogleMapController _controller;
-  bool _added = false;
+class MyApp2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Orders App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  DateTime? selectedTime;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('location').snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (_added) {
-          mymap(snapshot);
-        }
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-        return GoogleMap(
-          mapType: MapType.normal,
-          markers: {
-            Marker(
-                position: LatLng(
-                  snapshot.data!.docs.singleWhere(
-                      (element) => element.id == widget.user_id)['latitude'],
-                  snapshot.data!.docs.singleWhere(
-                      (element) => element.id == widget.user_id)['longitude'],
-                ),
-                markerId: MarkerId('id'),
-                icon: BitmapDescriptor.defaultMarkerWithHue(
-                    BitmapDescriptor.hueMagenta)),
-          },
-          initialCameraPosition: CameraPosition(
-              target: LatLng(
-                snapshot.data!.docs.singleWhere(
-                    (element) => element.id == widget.user_id)['latitude'],
-                snapshot.data!.docs.singleWhere(
-                    (element) => element.id == widget.user_id)['longitude'],
+      appBar: AppBar(
+        title: Text('New Order'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Select Date and Time:',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
               ),
-              zoom: 14.47),
-          onMapCreated: (GoogleMapController controller) async {
-            setState(() {
-              _controller = controller;
-              _added = true;
-            });
-          },
-        );
-      },
-    ));
+            ),
+            SizedBox(height: 8.0),
+            RaisedButton(
+              onPressed: () {
+                DateTime now = DateTime.now();
+                DateTime minDate = DateTime.now();
+                // Exclude current date
+                DateTime maxDate = now.add(Duration(days: 3));
+                DatePicker.showDateTimePicker(
+                  context,
+                  showTitleActions: true,
+                  minTime: minDate,
+                  maxTime: maxDate,
+                  onChanged: (time) {},
+                  onConfirm: (time) {
+                    // Check if the selected time is before 10 PM (22:00)
+                    if (time.hour <= 21) { // 21 corresponds to 9 PM
+                      setState(() {
+                        selectedTime = DateTime(
+                          DateTime.now().year,
+                          DateTime.now().month,
+                          DateTime.now().day,
+                          time.hour,
+                          time.minute,
+                        );
+                      });
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Invalid Time'),
+                            content: Text('Please select a time before 10 PM.'),
+                            actions: [
+                              FlatButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                  currentTime: DateTime.now(),
+                  locale: LocaleType.en,
+                );
+              },
+              child: Text('Select'),
+            ),
+            SizedBox(height: 16.0),
+            selectedTime != null
+                ? Text(
+              'Selected Date and Time: ${selectedTime != null ? selectedTime.toString() : 'Not selected'}',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+                : SizedBox(),
+            SizedBox(height: 16.0),
+            RaisedButton(
+              onPressed: selectedTime != null
+                  ? () {
+                saveOrder();
+              }
+                  : null,
+              child: Text('Place Order'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  Future<void> mymap(AsyncSnapshot<QuerySnapshot> snapshot) async {
-    await _controller
-        .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-            target: LatLng(
-              snapshot.data!.docs.singleWhere(
-                  (element) => element.id == widget.user_id)['latitude'],
-              snapshot.data!.docs.singleWhere(
-                  (element) => element.id == widget.user_id)['longitude'],
-            ),
-            zoom: 14.47)));
+  void saveOrder() {
+    // Save the order to Firebase Firestore
+    FirebaseFirestore.instance.collection('orders').add({
+      'arrival_date': selectedTime,
+    }).then((value) {
+      print('Order saved successfully!');
+      // Perform any additional actions or show success message
+    }).catchError((error) {
+      print('Failed to save order: $error');
+      // Handle the error
+    });
   }
 }

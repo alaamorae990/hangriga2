@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hangry/screens/cart/cart_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,9 +22,10 @@ import '../../providers/cart_provider.dart';
 
 class PaypalPaymentDelivery extends StatefulWidget {
   final Function onFinish;
-  final double total;
-  final String details;
-  PaypalPaymentDelivery({required this.onFinish,required this.details, required this.total});
+  final double total,mous, deliveryFee;
+  final LatLng selectedLocation;
+  final String detiles,time,addrees,totalFood;
+  PaypalPaymentDelivery({required this.onFinish, required this.total, required this.detiles, required this.time, required this.selectedLocation, required this.addrees, required this.mous, required this.deliveryFee, required this.totalFood});
 
   @override
   State<StatefulWidget> createState() {
@@ -32,6 +34,7 @@ class PaypalPaymentDelivery extends StatefulWidget {
 }
 
 class PaypalPaymentDeliveryState extends State<PaypalPaymentDelivery> {
+  DateTime? selectedTime;
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   String? checkoutUrl;
   String? executeUrl;
@@ -157,7 +160,7 @@ class PaypalPaymentDeliveryState extends State<PaypalPaymentDelivery> {
 
   @override
   Widget build(BuildContext context) {
-    print(checkoutUrl);
+
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
 
@@ -167,10 +170,7 @@ class PaypalPaymentDeliveryState extends State<PaypalPaymentDelivery> {
     double total = 0.0;
     cartProvider.getCartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findProdById(value.productId);
-      total += (getCurrProduct.isOnSale
-              ? getCurrProduct.salePrice
-              : getCurrProduct.price) *
-          value.quantity;
+      total += value.totalPrice;
     });
     if (checkoutUrl != null) {
       return Scaffold(
@@ -200,7 +200,13 @@ class PaypalPaymentDeliveryState extends State<PaypalPaymentDelivery> {
          Navigator.push(
                  context,
            MaterialPageRoute(builder: (context) =>  CartShow(
-                  detiles: widget.details,
+             mous:widget.mous ,
+             totalFood:widget.totalFood,
+             delevryFee: widget.deliveryFee,
+             time:widget.time,
+                  detiles: widget.detiles,
+             selectedLocation:widget.selectedLocation ,
+             addrees:widget.addrees ,
                     )),
                                    );
             }

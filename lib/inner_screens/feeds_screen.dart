@@ -107,7 +107,7 @@ class _FeedsScreenState extends State<FeedsScreen> {
                   crossAxisCount: 2,
                   padding: EdgeInsets.zero,
                   // crossAxisSpacing: 10,
-                  childAspectRatio: size.width / (size.height * 0.61),
+                  childAspectRatio: size.width / (size.height * 1.1),
                   children: List.generate(
                       _searchTextController!.text.isNotEmpty
                           ? listProdcutSearch.length

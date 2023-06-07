@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_swish_payment/flutter_swish_payment.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart' as loc;
 import '../../consts/theme_data.dart';
 import '../../services/utils.dart';
 import '../../widgets/back_widget.dart';
 import '../../widgets/text_widget.dart';
+import '../maps/map_screen.dart';
 import '../payment/make_payment.dart';
 import '../payment/make_payment_delivery.dart';
 class BackupOrDel extends StatefulWidget {
@@ -18,16 +20,30 @@ class BackupOrDel extends StatefulWidget {
 }
 
 class _BackupOrDelState extends State<BackupOrDel> {
+  Future<Position> _getLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    return position;
+  }
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
         final Color color = Utils(context).color;
+
+
     return Scaffold(
        appBar: AppBar(
 
           elevation: 0,
           backgroundColor: primary,
         ),
-          body: Stack(children:<Widget> [
+          body: _isLoading
+              ? Center(
+            child: CircularProgressIndicator(),
+          )
+              :
+          Stack(children:<Widget> [
             Center(child: Image.asset('assets/images/cart.png',fit: BoxFit.fitHeight,)),
             Container(
               color: Theme.of(context).cardColor,
@@ -64,18 +80,64 @@ class _BackupOrDelState extends State<BackupOrDel> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                           onPressed: () async {
-                            // make PayPal payment
-                    final loc.LocationData _locationResult =
-                          await location.getLocation();
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) => MakePaymentDeliv(
-                                  
-                                   swishClient: widget.swishClient,
-                                ),
-                              ),
-                            );
+                            setState(() {
+                              _isLoading = true;
+                            });
+
+                            Geolocator.checkPermission().then((permission) {
+                              if (permission == LocationPermission.denied) {
+                                Geolocator.requestPermission().then((permission) {
+                                  if (permission == LocationPermission.whileInUse ||
+                                      permission == LocationPermission.always) {
+                                    _getLocation().then((position) {
+                                      double latitude = position.latitude ?? 56.032208313635344;
+                                      double longitude =
+                                          position.longitude ?? 14.154133498371024;
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) => MapScreen(
+                                            laut: latitude,
+                                            long: longitude,
+                                            swishClient: widget.swishClient,
+                                          ),
+                                        ),
+                                      );
+                                    }).whenComplete(() {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+                                    });
+                                  }
+                                });
+                              } else if (permission == LocationPermission.whileInUse ||
+                                  permission == LocationPermission.always) {
+                                _getLocation().then((position) {
+                                  double latitude = position.latitude ?? 56.032208313635344;
+                                  double longitude =
+                                      position.longitude ?? 14.154133498371024;
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (BuildContext context) => MapScreen(
+                                        laut: latitude,
+                                        long: longitude,
+                                        swishClient: widget.swishClient,
+                                      ),
+                                    ),
+                                  );
+                                }).whenComplete(() {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                });
+                              }
+                            });
                           },
+                            // make PayPal payment
+
+
+
+
+
                           child: TextWidget(
                             text: 'Leverans',
                             color: color,

@@ -26,10 +26,11 @@ import '../../../widgets/heart_btn.dart';
 import '../../../widgets/text_widget.dart';
 
 class CartShowBackupWidget extends StatefulWidget {
-  const CartShowBackupWidget({Key? key, required this.q, required this.details})
+  const CartShowBackupWidget({Key? key, required this.q, required this.details, required this.time, required this.mous, required this.totalFood})
       : super(key: key);
   final int q;
-  final String details;
+  final double mous;
+  final String totalFood,details,time;
   @override
   State<CartShowBackupWidget> createState() => _CartShowBackupWidgetState();
 }
@@ -53,26 +54,26 @@ class _CartShowBackupWidgetState extends State<CartShowBackupWidget> {
         Size size = Utils(context).getScreenSize;
     final Color color = Utils(context).color;
     // Size size = Utils(context).getScreenSize;
-    final productProvider = Provider.of<ProductsProvider>(context);
-    final cartModel = Provider.of<CartModel>(context);
+    final productProvider = Provider.of<ProductsProvider>(context, listen: false);
+    final cartModel = Provider.of<CartModel>(context, listen: false);
     final getCurrProduct = productProvider.findProdById(cartModel.productId);
-        final cartProvider = Provider.of<CartProvider>(context);
-        cartProvider.getCartItems.forEach((key, value) {
-      final getCurrProduct = productProvider.findProdById(value.productId);});
-    // double usedPrice = getCurrProduct.isOnSale
+        final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    //     cartProvider.getCartItems.forEach((key, value) {
+    //   final getCurrProduct = productProvider.findProdById(value.productId);});
+    // // double usedPrice = getCurrProduct.isOnSale
     //     ? getCurrProduct.salePrice
     //     : getCurrProduct.price;
     // final cartProvider = Provider.of<CartProvider>(context);
     // _checkout();
-    _checkout();
+
     return GestureDetector(
       onTap: () {
-            cartProvider.clearOnlineCart();
-            cartProvider.clearLocalCart();
+        _checkout();
+            // cartProvider.clearOnlineCart();
+            // cartProvider.clearLocalCart();
             // ordersProvider.fetchOrders();
-  Navigator.pushReplacement(
-      context, MaterialPageRoute(builder: (BuildContext context) => const FetchScreen()));
-      },
+
+  },
       
       child: Column(
         children: [
@@ -96,19 +97,20 @@ class _CartShowBackupWidgetState extends State<CartShowBackupWidget> {
                             children: [
                            Padding(
                              padding: const EdgeInsets.all(8.0),
-                             child: 
-                              
-                               
+                             child:
+
+
                            TextWidget(
-                                      text:  'Your order '+'${getCurrProduct.title}',
+                             //your order
+                                      text:  'Du beställer '+'${getCurrProduct.title}',
                                       color: color,
                                       textSize: 16,
                                       isTitle: true,
                                ),
-                               
-                               
-                               
-                             
+
+
+
+
                            ),
                               Icon(Icons.check_circle_outline),
                               // TextWidget(text: "Your order has been placed and it need 20 min to be ready tap here to return to home page", color: color, textSize: 18),
@@ -124,7 +126,8 @@ class _CartShowBackupWidgetState extends State<CartShowBackupWidget> {
                               
              
           ),
-           Center(child: TextWidget(text: " you can go to resturant and backup it, tap here to return to home page", color: color, textSize: 18,isTitle: true,)),
+             //you can go to resturant and backup it, tap here to return to home page
+             Center(child: TextWidget(text: " du kan gå till restaurangen och backup den, tryck här för att återgå till startsidan", color: color, textSize: 18,isTitle: true,)),
         ],
       ),
     );
@@ -135,35 +138,45 @@ class _CartShowBackupWidgetState extends State<CartShowBackupWidget> {
     final orderId = const Uuid().v4();
     String? phoneNumber;
 
-    final ordersProvider = Provider.of<OrdersProvider>(context);
+    final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
 
     Size size = Utils(context).getScreenSize;
-    final productProvider = Provider.of<ProductsProvider>(context);
-    final cartModel = Provider.of<CartModel>(context);
+    final productProvider = Provider.of<ProductsProvider>(context, listen: false);
+    final cartModel = Provider.of<CartModel>(context, listen: false);
     final getCurrProduct3 = productProvider.findProdById(cartModel.productId);
-    final cartProvider = Provider.of<CartProvider>(context);
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
     double total = 0.0;
     String spacing = "*********";
     String quantityOfOrders = '';
+    String extra='';
     String namesOfOrders = " ";
+    String totalExtra='';
+    String totlaDrink='';
+    String food='';
+
     cartProvider.getCartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findProdById(value.productId);
-      total += (getCurrProduct.isOnSale
-              ? getCurrProduct.salePrice
-              : getCurrProduct.price) *
-          value.quantity;
+      total += value.totalPrice ;
+
+      totalExtra+=(value.extra1==""?"":value.extra1+" , ")+(value.extra2==""?"":value.extra2+" , ")+(value.extra3==""?"":value.extra3+" , ")+(value.extra4==""?"":value.extra4+" , ")+(value.extra5==""?"":value.extra5+" , ")+(value.extra6==""?"":value.extra6+" , ")+(value.extra7==""?"":value.extra7+" , ")+(value.extra8==""?"":value.extra8+" , ")+(value.extra9==""?"":value.extra9+" , ")+(value.extra10==""?"":value.extra10+" , ");
+      totlaDrink+=(value.drink1==""?"":value.drink1+" , ")+(value.drink2==""?"":value.drink2+" , ")+(value.drink3==""?"":value.drink3+" , ")+(value.drink4==""?"":value.drink4+" , ")+(value.drink5==""?"":value.drink5+" , ")+(value.drink6==""?"":value.drink6+" ,  ")+(value.drink7==""?"":value.drink7+" , ")+(value.drink8==""?"":value.drink8+" , ")+(value.drink9==""?"":value.drink9+" , ")+(value.drink10==""?"":value.drink10+" , ");
       namesOfOrders = (namesOfOrders + spacing + getCurrProduct.title);
+      food+=value.quantity.toString()+" x "+getCurrProduct.title+': '+(value.quantity*getCurrProduct.price).toString()+" Kr )"+" ( "+totalExtra+" ) ";
       quantityOfOrders =
-          (quantityOfOrders + spacing + value.quantity.toString());
+      (quantityOfOrders + spacing + value.quantity.toString());
+      extra=(extra+spacing+value.extra1==""?"":(value.extra1+spacing)+value.extra2==""?"":(value.extra2+spacing)
+
+      );
+      totalExtra="";
+      // yourList.add(value);
     });
- 
-    cartProvider.getCartItems.forEach((key, value) async {
+
       // final getCurrProduct2 = productProvider.findProdById(
       //   value.productId,
       // );
       // final loc.LocationData _locationResult =
       //     await location.getLocation();
-      final ProductDetails details = new ProductDetails();
+      // final ProductDetails details = new ProductDetails(itemName: "",);
 
       try {
         final DocumentSnapshot userDoc = await FirebaseFirestore.instance
@@ -174,37 +187,45 @@ class _CartShowBackupWidgetState extends State<CartShowBackupWidget> {
         await FirebaseFirestore.instance.collection('ordersBackup').doc(orderId).set({
           'orderId': orderId,
           'userId': user.uid,
-          'productId': value.productId,
-          'price': (getCurrProduct3.isOnSale
-                  ? getCurrProduct3.salePrice
-                  : getCurrProduct3.price) *
-              value.quantity,
+          // 'productId': value.productId,
+          // 'price': (getCurrProduct3.isOnSale
+          //         ? getCurrProduct3.salePrice
+          //         : getCurrProduct3.price) *
+          //     value.quantity,
           'totalPrice': total,
+          'drink':totlaDrink,
           'quantity': quantityOfOrders,
           'imageUrl': getCurrProduct3.imageUrl,
           'userName': user.displayName,
+          'isServed':false,
+          'totalFood':widget.totalFood,
           // 'latitude': _locationResult.latitude,
           // 'longitude': _locationResult.longitude,
           'orderDate': Timestamp.now(),
           'phoneNumber': phoneNumber,
           'productCategoryName': getCurrProduct3.productCategoryName,
-          'title': namesOfOrders,
-          'details': widget.details
+          'title': food,
+          'details': widget.details,
+          'ordertime':widget.time,
         });
         //payment fun is here with delivery
         await
-            // cartProvider.clearOnlineCart();
-            // cartProvider.clearLocalCart();
+            cartProvider.clearOnlineCart();
+            cartProvider.clearLocalCart();
             // ordersProvider.fetchOrders();
             await Fluttertoast.showToast(
-          msg: "Your order has been placed and it need 20 min to be ready",
+              //
+          msg: "Din beställning har lagts och den behöver 20 minuter för att bli klar:",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
         );
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (BuildContext context) => const FetchScreen()));
+
       } catch (error) {
         GlobalMethods.errorDialog(subtitle: error.toString(), context: context);
       } finally {}
-    });
+    ;
     return Text("data");
   }
 }

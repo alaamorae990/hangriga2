@@ -18,8 +18,10 @@ class TextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
+      softWrap: true,
       maxLines: maxLines,
       style: TextStyle(
+        letterSpacing: 2,
           overflow: TextOverflow.ellipsis,
           color: color,
           fontSize: textSize,

@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../consts/contss.dart';
 import '../../consts/firebase_consts.dart';
+import '../../consts/theme_data.dart';
 import '../../services/global_methods.dart';
 import '../../services/utils.dart';
 import '../../widgets/auth_button.dart';
@@ -37,7 +38,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     if (_emailTextController.text.isEmpty ||
         !_emailTextController.text.contains("@")) {
       GlobalMethods.errorDialog(
-          subtitle: 'Please enter a correct email address', context: context);
+        //Please enter a correct email address
+          subtitle: 'Vänligen ange en korrekt e-postadress', context: context);
     } else {
       setState(() {
         _isLoading = true;
@@ -46,7 +48,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         await authInstance.sendPasswordResetEmail(
             email: _emailTextController.text.toLowerCase());
         Fluttertoast.showToast(
-          msg: "An email has been sent to your email address",
+          //An email has been sent to your email address
+          msg: "Ett e-postmeddelande har skickats till din e-postadress",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -77,6 +80,16 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
     return Scaffold(
+      appBar: AppBar(
+
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: primary,
+      ),
       // backgroundColor: Colors.blue,
       body: LoadingManager(
         isLoading: _isLoading,
@@ -112,7 +125,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     height: 20,
                   ),
                   TextWidget(
-                    text: 'Forget password',
+                    //Forget password
+                    text: 'Glöm lösenord',
                     color: Colors.white,
                     textSize: 30,
                   ),
@@ -123,7 +137,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     controller: _emailTextController,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
-                      hintText: 'Email address',
+                      //Email address
+                      hintText: 'E-postadress',
                       hintStyle: TextStyle(color: Colors.white),
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
@@ -140,7 +155,8 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     height: 15,
                   ),
                   AuthButton(
-                    buttonText: 'Reset now',
+                    //Reset now
+                    buttonText: 'Återställ nu',
                     fct: () {
                       _forgetPassFCT();
                     },

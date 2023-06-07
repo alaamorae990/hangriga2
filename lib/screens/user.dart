@@ -113,7 +113,8 @@ class _UserScreenState extends State<UserScreen> {
                 // ),
                 RichText(
                   text: TextSpan(
-                    text: 'Welcome ',
+                    //welcome
+                    text: 'Välkommen ',
                     style: const TextStyle(
                       color: Color.fromARGB(255, 160, 106, 153),
                       fontSize: 26,
@@ -154,7 +155,8 @@ class _UserScreenState extends State<UserScreen> {
                 ),
                
                 _listTiles(
-                  title: 'Address 2',
+                  //Address
+                  title: 'Adress 2',
                   subtitle: address,
                   icon: IconlyLight.profile,
                   onPressed: () async {
@@ -164,7 +166,8 @@ class _UserScreenState extends State<UserScreen> {
                 ),
                 
                 _listTiles(
-                  title: 'Wishlist',
+                  //Wishlist
+                  title: 'önskelista',
                   icon: IconlyLight.heart,
                   onPressed: () {
                     GlobalMethods.navigateTo(
@@ -173,7 +176,8 @@ class _UserScreenState extends State<UserScreen> {
                   color: color,
                 ),
                 _listTiles(
-                  title: 'Viewed',
+                  //Viewed
+                  title: 'Tittade',
                   icon: IconlyLight.show,
                   onPressed: () {
                     GlobalMethods.navigateTo(
@@ -183,7 +187,8 @@ class _UserScreenState extends State<UserScreen> {
                   color: color,
                 ),
                 _listTiles(
-                  title: 'Forget password',
+                  //Forget password'
+                  title: 'Glöm lösenord',
                   icon: IconlyLight.unlock,
                   onPressed: () {
                     Navigator.of(context).push(
@@ -196,7 +201,9 @@ class _UserScreenState extends State<UserScreen> {
                 ),
                 SwitchListTile(
                   title: TextWidget(
-                    text: themeState.getDarkTheme ? 'Dark mode' : 'Light mode',
+
+                    //text: themeState.getDarkTheme ? 'Dark mode' : 'Light mode',
+                    text: themeState.getDarkTheme ? 'Mörkt läge' : 'Ljusläge',
                     color: color,
                     textSize: 18,
                     // isTitle: true,
@@ -213,7 +220,8 @@ class _UserScreenState extends State<UserScreen> {
                 ),
               
                 _listTiles(
-                  title: user == null ? 'Login' : 'Logout',
+                  // title: user == null ? 'Login' : 'Logout',
+                  title: user == null ? 'Logga in' : 'Logga ut',
                   icon: user == null ? IconlyLight.login : IconlyLight.logout,
                   onPressed: () {
                     if (user == null) {
@@ -225,8 +233,10 @@ class _UserScreenState extends State<UserScreen> {
                       return;
                     }
                     GlobalMethods.warningDialog(
-                        title: 'Sign out',
-                        subtitle: 'Do you wanna sign out?',
+                      //Sign out'
+                        title: 'Logga ut',
+                        //Do you wanna sign out?
+                        subtitle: 'Vill du logga ut??',
                         fct: () async {
                           await authInstance.signOut();
                           Navigator.of(context).push(
@@ -253,14 +263,16 @@ class _UserScreenState extends State<UserScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Update'),
+            //Update
+            title: const Text('Uppdatering'),
             content: TextField(
               // onChanged: (value) {
               //   print('_addressTextController.text ${_addressTextController.text}');
               // },
               controller: _addressTextController,
               maxLines: 5,
-              decoration: const InputDecoration(hintText: "Your address"),
+              //Your address
+              decoration: const InputDecoration(hintText: "Din adress"),
             ),
             actions: [
               TextButton(
@@ -283,7 +295,7 @@ class _UserScreenState extends State<UserScreen> {
                         subtitle: err.toString(), context: context);
                   }
                 },
-                child: const Text('Update'),
+                child: const Text('Uppdatering'),
               ),
             ],
           );

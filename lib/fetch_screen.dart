@@ -7,6 +7,8 @@ import 'package:hangry/providers/dark_theme_provider.dart';
 import 'package:hangry/providers/orders_provider.dart';
 import 'package:hangry/providers/wishlist_provider.dart';
 import 'package:hangry/screens/btm_bar.dart';
+import 'package:hangry/screens/cart/cart2/cart_show.dart';
+import 'package:hangry/screens/cart/cart2/cart_show_backup.dart';
 import 'package:provider/provider.dart';
 
 import 'consts/contss.dart';
@@ -43,6 +45,7 @@ class _FetchScreenState extends State<FetchScreen> {
       if (user == null) {
         await productsProvider.fetchProducts();
         cartProvider.clearLocalCart();
+        await productsProvider.fetchResturant();
         wishlistProvider.clearLocalWishlist();
         // orderProvider.clearLocalOrder();
 
@@ -58,7 +61,15 @@ class _FetchScreenState extends State<FetchScreen> {
       }
 
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (ctx) => const BottomBarScreen(),
+        builder: (ctx) =>  BottomBarScreen(
+          // detiles: 'no more',
+          // time: '12.2',
+          //
+          // addrees: "nearto my house ",
+          //
+          // // selectedLocation: ,
+
+        ),
       ));
     });
     super.initState();

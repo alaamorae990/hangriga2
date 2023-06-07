@@ -52,7 +52,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
       body: productByCat.isEmpty
           ? const EmptyProdWidget(
-              text: 'No products belong to this category',
+        //No food belong to this Restauranger
+              text: 'Ingen mat tillhör denna Restauranger ',
             )
           : SingleChildScrollView(
               child: Column(children: [
@@ -80,7 +81,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           borderSide: const BorderSide(
                               color: Colors.greenAccent, width: 1),
                         ),
-                        hintText: "What's in your mind",
+                        //What's in your mind
+                        hintText: "Vad tänker du på",
                         prefixIcon: const Icon(Icons.search),
                         suffix: IconButton(
                           onPressed: () {
@@ -101,14 +103,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 _searchTextController!.text.isNotEmpty &&
                         listProdcutSearch.isEmpty
                     ? const EmptyProdWidget(
-                        text: 'No products found, please try another keyword')
+                  //No products found, please try another keyword
+                        text: 'Inga produkter hittades, försök med ett annat sökord')
                     : GridView.count(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         crossAxisCount: 2,
                         padding: EdgeInsets.zero,
                         // crossAxisSpacing: 10,
-                        childAspectRatio: size.width / (size.height * 0.70),
+                        childAspectRatio: size.width / (size.height * 1.12),
                         children: List.generate(
                             _searchTextController!.text.isNotEmpty
                                 ? listProdcutSearch.length

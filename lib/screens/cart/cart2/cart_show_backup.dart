@@ -23,8 +23,10 @@ import 'cart_show_widger.dart';
 import 'package:location/location.dart' as loc;
 
 class CartShowBackup extends StatefulWidget {
-  const CartShowBackup({Key? key, required this.detiles}) : super(key: key);
-final String detiles;
+  const CartShowBackup({Key? key, required this.detiles, required this.time, required this.totalFood, required this.mous}) : super(key: key);
+final String detiles,totalFood;
+final double mous;
+  final String time;
   @override
   State<CartShowBackup> createState() => _CartShowBackupState();
 }
@@ -58,10 +60,19 @@ class _CartShowBackupState extends State<CartShowBackup> {
             imagePath: 'assets/images/cart.png',
           )
         : Scaffold(
+      appBar: AppBar(
+        backgroundColor: primary,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),),
             body: Column(
               children: [
                 // _checkout(ctx: context),
                 Expanded(
+                  flex: 1,
                   child: SizedBox(
                     height: 200.0,
                     child: ListView.builder(
@@ -72,8 +83,10 @@ class _CartShowBackupState extends State<CartShowBackup> {
                             value: cartItemsList[index],
                             child: CartShowBackupWidget(
                               q: cartItemsList[index].quantity,
+                              mous: widget.mous,
+                              totalFood: widget.totalFood,
                               details: widget.detiles,
-
+                              time:widget.time,
                             ));
                       },
                     ),

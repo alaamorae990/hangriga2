@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
 import 'dart:ffi';
 
@@ -5,15 +7,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_swish_payment/flutter_swish_payment.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hangry/screens/payment/payment.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hangry/screens/payment/payment_delivery.dart';
-import 'package:hangry/screens/payment/swich.dart';
-import 'package:hangry/screens/payment/swich_delivery.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import '../../consts/firebase_consts.dart';
 import '../../consts/theme_data.dart';
@@ -30,9 +29,11 @@ import '../cart/cart_screen.dart';
 
 class MakePaymentDeliv extends StatefulWidget {
   final SwishClient swishClient;
+  final LatLng selectedLocation;
+  final Set<Marker> markers;
   static const routeName = '/MakePaymentDeliv';
 
-  const MakePaymentDeliv({Key? key, required this.swishClient})
+  const MakePaymentDeliv({Key? key, required this.swishClient, required this.selectedLocation, required this.markers})
       : super(key: key);
 
   @override
@@ -42,16 +43,17 @@ class MakePaymentDeliv extends StatefulWidget {
 // final loc.Location location = loc.Location();
 
 class _MakePaymentDelivState extends State<MakePaymentDeliv> {
+  DateTime? selectedTime;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final detailOrder = TextEditingController();
+    final detailAddrees = TextEditingController();
     @override
     void dispose() {
-      detailOrder.dispose();
+      detailAddrees.dispose();
       super.dispose();
     }
-
     User? user = authInstance.currentUser;
     final Color color = Utils(context).color;
     final cartProvider = Provider.of<CartProvider>(context);
@@ -60,20 +62,30 @@ class _MakePaymentDelivState extends State<MakePaymentDeliv> {
     final productProvider = Provider.of<ProductsProvider>(context);
     final ordersProvider = Provider.of<OrdersProvider>(context);
     double total = 0.0;
+    String extra1="";
     cartProvider.getCartItems.forEach((key, value) {
       final getCurrProduct = productProvider.findProdById(value.productId);
-      total += (getCurrProduct.isOnSale
-              ? getCurrProduct.salePrice
-              : getCurrProduct.price) *
-          value.quantity;
+      // extra1=value
+
+      total += value.totalPrice ;
     });
+
     String mok = "";
     String delivery = "";
-    final de = productProvider.getTax;
-    de.map((e) => mok = e.tax).toList();
-    de.map((e) => delivery = e.deliveryValue).toList();
 
+    final de = productProvider.getResturants;
+    final tax = productProvider.getTax;
+    tax.map((e) => mok = e.tax).toList();
+    de.map((e) => delivery = e.delievryCost).toList();
+    String endTime = "";
+    de.map((e) => endTime = e.endTime).toList();
     double totalPricev = double.parse(mok) + double.parse(delivery) + total;
+    double mous=double.parse(mok);
+    double deliveryFee=double.parse(delivery);
+    cartProvider.getCartItems.forEach((key, value) {
+      final getCurrProduct = productProvider.findProdById(value.productId);
+
+    });
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -81,231 +93,1000 @@ class _MakePaymentDelivState extends State<MakePaymentDeliv> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         key: _scaffoldKey,
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
           elevation: 0,
           backgroundColor: primary,
         ),
-        body: Column(
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return
+            SingleChildScrollView(
+              child: Column(
                 children: [
-                  TextWidget(
-                      text: 'Food Bill is',
-                      color: color,
-                      textSize: 18,
-                      isTitle: true),
-                  TextWidget(
-                      text: '', color: color, textSize: 18, isTitle: true),
-                  TextWidget(
-                      text: '$total',
-                      color: color,
-                      textSize: 18,
-                      isTitle: true),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextWidget(
-                      text: 'Skatter is',
-                      color: color,
-                      textSize: 18,
-                      isTitle: true),
-                  TextWidget(
-                      text: '', color: color, textSize: 18, isTitle: true),
-                  TextWidget(
-                      text: '$mok', color: color, textSize: 18, isTitle: true),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextWidget(
-                      text: 'delivery is',
-                      color: color,
-                      textSize: 18,
-                      isTitle: true),
-                  TextWidget(
-                      text: '', color: color, textSize: 18, isTitle: true),
-                  TextWidget(
-                      text: '$delivery',
-                      color: color,
-                      textSize: 18,
-                      isTitle: true),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  TextWidget(
-                      text: 'Total bill is ',
-                      color: color,
-                      textSize: 18,
-                      isTitle: true),
-                  TextWidget(
-                      text: '', color: color, textSize: 18, isTitle: true),
-                  TextWidget(
-                      text: '$totalPricev',
-                      color: color,
-                      textSize: 18,
-                      isTitle: true),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            const Divider(thickness: 5, color: primary),
-            TextFormField(
-              textInputAction: TextInputAction.done,
-              keyboardType: TextInputType.text,
-              maxLines: 2,
-              controller: detailOrder,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return "Nothing";
-                } else {
-                  return null;
-                }
-              },
-              style: const TextStyle(color: Colors.black),
-              decoration: const InputDecoration(
-                hintText:
-                    'Enter any details that you want EX: no onion for my burger',
-                hintStyle: TextStyle(color: Color.fromARGB(255, 90, 82, 82)),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black),
-                ),
-                errorBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            TextWidget(
-                text: "Choose Payment Method",
-                color: color,
-                textSize: 20,
-                isTitle: true),
-            SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Color.fromARGB(255, 156, 147, 147).withOpacity(0.2)),
-                width: 300,
-                height: 200,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
+                  Container(
+                    height: constraints.maxHeight * 0.4, // Adjust the value as needed
+                    width: double.infinity,
+                    child: GoogleMap(
+                      initialCameraPosition: CameraPosition(
+                        target: widget.selectedLocation,
+                        zoom: 14.0,
+                      ),
+                      markers: widget.markers,
                     ),
-                    RaisedButton(
-                      onPressed: () async {
-                        try {
-                          await initPayment(
-                              amount: totalPricev * 100,
-                              context: context,
-                              email: user!.email ?? '');
-                        } catch (error) {
-                          return;
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.text,
+                      maxLines: 2,
+                      controller: detailAddrees,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Ingenting";
+                        } else {
+                          return null;
                         }
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CartShow(
-                                    detiles: detailOrder.text,
-                                  )),
-                        );
-                        // make PayPal payment
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (BuildContext context) => PaypalPaymentDelivery(
-                        //       total: totalPricev,
-                        //       details:detailOrder.text,
-                        //       onFinish: (number) async {
-                        //         // payment done
-                        //         print('order id: ' + number);
-
-                        //       },
-                        //     ),
-                        //   ),
-                        // );
                       },
-                      child: Text(
-                        'Pay with Credit Card ',
-                        textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.black),
+                      decoration: const InputDecoration(
+                        hintText:
+                            //Enter the apartment details
+                        'Ange lägenhetsinformationen',
+                        hintStyle: TextStyle(color: Color.fromARGB(
+                            255, 90, 82, 82)),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        errorBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
                       ),
                     ),
-                    RaisedButton(
-                      onPressed: () {
-                        // make PayPal payment
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                PaypalPaymentDelivery(
-                              total: totalPricev,
-                              details: detailOrder.text,
-                              onFinish: (number) async {
-                                // payment done
-                                print('order id: ' + number);
+                  ),
+                  Divider(color: primary,thickness: 2,),
+                  Column(
+                    children: cartProvider.getCartItems.values.map((value) {
+                      final getCurrProduct = productProvider.findProdById(
+                          value.productId);
+                      return Container(
+                        width: double.infinity,
+                        child: Column(
+                          children: [
+
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  Flexible(
+                                    child: Text(getCurrProduct.title,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+                                  Text('${value.quantity}'" x  : " +
+                                      (getCurrProduct.price * value.quantity)
+                                          .toString(),
+                                    style: const TextStyle(letterSpacing: 2,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 18
+                                    ),),
+                                ],
+                              ),
+                            ),
+
+                            value.extra1 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+                                  Flexible(
+                                    child: Text(value.extra1,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.extra2 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+                                  Flexible(
+                                    child: Text(value.extra2,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.extra3 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+                                  Text(value.extra3,
+                                    style: const TextStyle(letterSpacing: 2,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 18
+                                    ),),
+                                ],
+                              ),
+                            ),
+                            value.extra4 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.extra4,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.extra5 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.extra5,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.extra6 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.extra6,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.extra7 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.extra7,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.extra8 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.extra8,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.extra9 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.extra9,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ), value.extra10 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Exstra', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.extra10,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(color: Colors.black,),
+                            value.drink1 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink1,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink2 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink2,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink3 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink3,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink4 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink4,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink5 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink5,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink6 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink6,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink7 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink7,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink8 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink8,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink9 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink9,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            value.drink10 == "" ? const SizedBox.shrink() :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  const Text(
+                                    'drycker', style: TextStyle(letterSpacing: 2,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18
+                                  ),),
+                                  TextWidget(
+                                      text: '',
+                                      color: color,
+                                      textSize: 18,
+                                      isTitle: true),
+
+                                  Flexible(
+                                    child: Text(value.drink10,
+                                      style: const TextStyle(letterSpacing: 2,
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 18
+                                      ),),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(color: Colors.black,),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextWidget(
+                          //Food Bill is
+                            text: 'Food Bill är',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                        TextWidget(
+                            text: '',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                        TextWidget(
+                            text: '$total',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextWidget(
+                            text: 'moms är',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                        TextWidget(
+                            text: '',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                        TextWidget(
+                            text: mok,
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextWidget(
+                          //delivery is
+                            text: 'leverans är',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                        TextWidget(
+                            text: '',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                        TextWidget(
+                            text: delivery,
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextWidget(
+                          //Total bill is
+                            text: 'Totala räkningen är ',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                        TextWidget(
+                            text: '',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                        TextWidget(
+                            text: '$totalPricev',
+                            color: color,
+                            textSize: 18,
+                            isTitle: true),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  const Divider(thickness: 5, color: primary),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.text,
+                      maxLines: 2,
+                      controller: detailOrder,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Ingenting";
+                        } else {
+                          return null;
+                        }
+                      },
+                      style: const TextStyle(color: Colors.black),
+                      decoration: const InputDecoration(
+                        hintText:
+                       // 'Enter any details that you want EX: no onion for my burger',
+                        'Ange alla detaljer som du vill ha EX: ingen lök',
+                        hintStyle: TextStyle(color: Color.fromARGB(
+                            255, 90, 82, 82)),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        errorBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  Text(
+                    //Select Date and Time:
+                    'Välj datum och tid:',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8.0),
+                  RaisedButton(
+                    onPressed: () {
+                      DateTime now = DateTime.now();
+                      DateTime minDate = DateTime.now();
+                      // Exclude current date
+                      DateTime maxDate = now.add(Duration(days: 3));
+                      DatePicker.showDateTimePicker(
+                        context,
+                        showTitleActions: true,
+                        minTime: minDate,
+                        maxTime: maxDate,
+                        onChanged: (time) {
+                          // Update the selectedTime variable in the UI when the time changes
+                          // setState(() {
+                          //   selectedTime = time;
+                          // });
+                        },
+                        onConfirm: (time) {
+                          // Check if the selected time is before 10 PM (22:00)
+                          if (time.hour <= int.parse(endTime)) { // 21 corresponds to 9 PM
+                            setState(() {
+                              selectedTime = DateTime(
+                                DateTime.now().year,
+                                DateTime.now().month,
+                                DateTime.now().day,
+                                time.hour,
+                                time.minute,
+
+                              );
+                            });
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  //Invalid Time
+                                  title: Text('Välj en tid innan'),
+                                  //Please select a time before
+                                  content: Text('Välj en tid innan $endTime PM.'),
+                                  actions: [
+                                    FlatButton(
+                                      child: Text('Okej'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
                               },
+                            );
+                          }
+                        },
+                        currentTime: DateTime.now(),
+                        locale: LocaleType.en,
+                      );
+                    },
+                    //selected
+                    child: Text('vald'),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                selectedTime != null
+                    ? Text(
+                  //Selected Date and Time
+                  'Valt datum och tid: ${selectedTime.toString().substring(0, 16)}',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+
+                  //Not selected
+                  ):Text("Ej valt"),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  TextWidget(
+                    //Choose Payment Method
+                      text: "Välj betalsätt",
+                      color: color,
+                      textSize: 20,
+                      isTitle: true),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: const Color.fromARGB(255, 156, 147, 147)
+                              .withOpacity(0.2)),
+                      width: 300,
+                      height: 200,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          RaisedButton(
+                            onPressed: () async {
+                              try {
+                                await initPayment(
+                                    amount: totalPricev * 100,
+                                    context: context,
+                                    email: user!.email ?? '');
+                              } catch (error) {
+                                return;
+                              }
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CartShow(
+                                          totalFood:total.toString(),
+                                          delevryFee: deliveryFee,
+                                          mous: mous,
+                                          selectedLocation: widget.selectedLocation,
+                                          detiles: detailOrder.text,
+                                          addrees:detailAddrees.text,
+                                          time:selectedTime.toString().substring(0, 16),
+                                        )),
+                              );
+                            },
+                            child: const Text(
+                              //Pay with Credit Card
+                              'Betala med kreditkort ',
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                        );
-                      },
-                      child: Text(
-                        'Pay with Paypal ',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        //           // make PayPal payment
-                        //  Navigator.pushNamed(context, HomePage.routeName,
-                        //    arguments: totalPricev);
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => HomePageDelivery(
-                              name: totalPricev.toString(),
-                              details: detailOrder.text,
-                              swishClient: widget.swishClient,
+                          RaisedButton(
+                            onPressed: () {
+                              // make PayPal payment
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      PaypalPaymentDelivery(
+                                        totalFood:total.toString(),
+                                        deliveryFee: deliveryFee,
+                                        mous: mous,
+                                        selectedLocation: widget.selectedLocation,
+                                        addrees:detailAddrees.text,
+                                        time:selectedTime.toString().substring(0, 16),
+                                        total: totalPricev,
+                                        detiles:detailOrder.text,
+
+                                        onFinish: (number) async {
+                                          // payment done
+
+                                        },
+                                      ),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              //Pay with Paypal
+                              'Betala med PayPal ',
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                        );
-                      },
-                      child: Text(
-                        'Pay with Swish',
-                        textAlign: TextAlign.center,
+                          // RaisedButton(
+                          //   onPressed: () {
+                          //     //           // make PayPal payment
+                          //     //  Navigator.pushNamed(context, HomePage.routeName,
+                          //     //    arguments: totalPricev);
+                          //     Navigator.of(context).push(
+                          //       MaterialPageRoute(
+                          //         builder: (BuildContext context) => HomePageDelivery(
+                          //           name: totalPricev.toString(),
+                          //           details: detailOrder.text,
+                          //           swishClient: widget.swishClient,
+                          //         ),
+                          //       ),
+                          //     );
+                          //   },
+                          //   child: const Text(
+                          //     'Pay with Swish',
+                          //     textAlign: TextAlign.center,
+                          //   ),
+                          // ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            );
+
+          }
         ),
       ),
     );

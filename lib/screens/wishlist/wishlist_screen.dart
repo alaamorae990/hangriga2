@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:hangry/consts/theme_data.dart';
 import 'package:provider/provider.dart';
 import '../../providers/wishlist_provider.dart';
 import '../../services/global_methods.dart';
@@ -23,21 +24,39 @@ class WishlistScreen extends StatelessWidget {
     final wishlistItemsList =
         wishlistProvider.getWishlistItems.values.toList().reversed.toList();
     return wishlistItemsList.isEmpty
-        ? const EmptyScreen(
-            title: 'Your Wishlist Is Empty',
-            subtitle: 'Explore more and shortlist some items',
-            imagePath: 'assets/images/wishlist.png',
-            buttonText: 'Add a wish',
-          )
+        ? Scaffold(
+      appBar: AppBar(
+        backgroundColor: primary,
+        leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),),
+          body: const EmptyScreen(
+            //Your Wishlist Is Empty
+              title: 'Din önskelista är tom',
+              //Explore more and shortlist some items
+              subtitle: 'Explore more and shortlist some items',
+              imagePath: 'assets/images/wishlist.png',
+              //Add a wish
+              buttonText: 'Lägg till en önskan',
+            ),
+        )
         : Scaffold(
             appBar: AppBar(
                 centerTitle: true,
-                leading: const BackWidget(),
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
                 automaticallyImplyLeading: false,
                 elevation: 0,
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 title: TextWidget(
-                  text: 'Wishlist (${wishlistItemsList.length})',
+                  text: 'önskelista (${wishlistItemsList.length})',
                   color: color,
                   isTitle: true,
                   textSize: 22,
@@ -46,7 +65,8 @@ class WishlistScreen extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       GlobalMethods.warningDialog(
-                          title: 'Empty your wishlist?',
+                        //Empty your wishlist?
+                          title: 'Töm din önskelista?',
                           subtitle: 'Are you sure?',
                           fct: () async {
                             await wishlistProvider.clearOnlineWishlist();

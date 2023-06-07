@@ -36,6 +36,7 @@ class HomePageDelivery extends StatefulWidget {
 }
 
 class _HomePageDeliveryState extends State<HomePageDelivery> {
+  DateTime? selectedTime;
 //  @override
 //   void initState(){
 //         _name = widget.name;
@@ -160,12 +161,14 @@ class _HomePageDeliveryState extends State<HomePageDelivery> {
                         isWaiting = false;
                       });
                       // The payment is now done (or failed).
-                     Navigator.push(
-                         context,
-                         MaterialPageRoute(builder: (context) =>  CartShow(
-                          detiles: widget.details,
-                         )),
-                                   );
+                     // Navigator.push(
+                     //     context,
+                     //     MaterialPageRoute(builder: (context) =>  CartShow(
+                     //
+                     //      detiles: widget.details,
+                     //       time: selectedTime.toString().substring(0, 16),
+                     //     )),
+                     //               );
                     // User? user = authInstance.currentUser;
                     // final orderId = const Uuid().v4();
                     // final productProvider =

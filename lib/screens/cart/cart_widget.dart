@@ -54,8 +54,16 @@ class _CartWidgetState extends State<CartWidget> {
         wishlistProvider.getWishlistItems.containsKey(getCurrProduct.id);
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, ProductDetails.routeName,
-            arguments: cartModel.productId);
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) =>  ProductDetails(
+        //     id: cartModel.id,
+        //     itemName: cartModel.productCategoryName,
+        //   ),
+        //
+        //   ),
+        //
+        // );
       },
       child: Row(
         children: [
@@ -92,73 +100,19 @@ class _CartWidgetState extends State<CartWidget> {
                         const SizedBox(
                           height: 16.0,
                         ),
-                        SizedBox(
-                          width: size.width * 0.3,
-                          child: Row(
-                            children: [
-                              _quantityController(
-                                fct: () {
-                                  if (_quantityTextController.text == '1') {
-                                    return;
-                                  } else {
-                                    cartProvider.reduceQuantityByOne(
-                                        cartModel.productId);
-                                    setState(() {
-                                      _quantityTextController.text = (int.parse(
-                                                  _quantityTextController
-                                                      .text) -
-                                              1)
-                                          .toString();
-                                    });
-                                  }
-                                },
-                                color: Colors.red,
-                                icon: CupertinoIcons.minus,
-                              ),
-                              Flexible(
-                                flex: 1,
-                                child: TextField(
-                                  controller: _quantityTextController,
-                                  keyboardType: TextInputType.number,
-                                  maxLines: 1,
-                                  decoration: const InputDecoration(
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(),
-                                    ),
-                                  ),
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                      RegExp('[0-9]'),
-                                    ),
-                                  ],
-                                  onChanged: (v) {
-                                    setState(() {
-                                      if (v.isEmpty) {
-                                        _quantityTextController.text = '1';
-                                      } else {
-                                        return;
-                                      }
-                                    });
-                                  },
-                                ),
-                              ),
-                              _quantityController(
-                                fct: () {
-                                  cartProvider.increaseQuantityByOne(
-                                      cartModel.productId);
-                                  setState(() {
-                                    _quantityTextController.text = (int.parse(
-                                                _quantityTextController.text) +
-                                            1)
-                                        .toString();
-                                  });
-                                },
-                                color: Colors.green,
-                                icon: CupertinoIcons.plus,
-                              )
-                            ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextWidget(
+                            text: '('+widget.q.toString()+')',
+                            color: Colors.red,
+                            textSize: 20,
+                            isTitle: true,
                           ),
                         ),
+                        const SizedBox(
+                          height: 16.0,
+                        ),
+
                       ],
                     ),
                     const Spacer(),
@@ -166,22 +120,22 @@ class _CartWidgetState extends State<CartWidget> {
                       padding: const EdgeInsets.symmetric(horizontal: 5),
                       child: Column(
                         children: [
-                          InkWell(
-                            onTap: () async {
-                              await cartProvider.removeOneItem(
-                                cartId: cartModel.id,
-                                productId: cartModel.productId,
-                                quantity: cartModel.quantity,
-                                details: cartModel.details,
-                              );
-                              
-                            },
-                            child: const Icon(
-                              CupertinoIcons.cart_badge_minus,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                          ),
+                          // InkWell(
+                          //   onTap: () async {
+                          //     await cartProvider.removeOneItem(
+                          //       cartId: cartModel.id,
+                          //       productId: cartModel.productId,
+                          //       quantity: cartModel.quantity,
+                          //       details: cartModel.details,
+                          //     );
+                          //
+                          //   },
+                          //   child: const Icon(
+                          //     CupertinoIcons.cart_badge_minus,
+                          //     color: Colors.red,
+                          //     size: 20,
+                          //   ),
+                          // ),
                           const SizedBox(
                             height: 5,
                           ),
@@ -189,20 +143,20 @@ class _CartWidgetState extends State<CartWidget> {
                             productId: getCurrProduct.id,
                             isInWishlist: _isInWishlist,
                           ),
-                          TextWidget(
-                            text:
-                                '\$${(usedPrice * int.parse(_quantityTextController.text)).toStringAsFixed(2)}',
-                            color: color,
-                            textSize: 18,
-                            maxLines: 1,
-                          ),
-                          TextWidget(
-                            text:
-                              cartModel.details  ,
-                            color: color,
-                            textSize: 18,
-                            maxLines: 1,
-                          )
+                          // TextWidget(
+                          //   text:
+                          //       '\$${(usedPrice * int.parse(_quantityTextController.text)).toStringAsFixed(2)}',
+                          //   color: color,
+                          //   textSize: 18,
+                          //   maxLines: 1,
+                          // // ),
+                          // TextWidget(
+                          //   text:
+                          //     cartModel.details  ,
+                          //   color: color,
+                          //   textSize: 18,
+                          //   maxLines: 1,
+                          // )
                         ],
                       ),
                     ),

@@ -5,7 +5,8 @@ class ProductModel with ChangeNotifier{
   final double price, salePrice;
   final bool isOnSale, isPiece;
 final String extra1,extra2,extra3,extra4,extra5,extra6,
-  extra7,extra8,extra9,extra10
+  extra7,extra8,extra9,extra10,price1,price2,price3,price4,
+    price5,price6,price7,price8,price9,price10
   ;
 
   ProductModel(  
@@ -28,5 +29,15 @@ final String extra1,extra2,extra3,extra4,extra5,extra6,
         required this.extra8,
         required this.extra9,
         required this.extra10,
+        required this.price1,
+        required this.price2,
+        required this.price3,
+        required this.price4,
+        required this.price5,
+        required this.price6,
+        required this.price7,
+        required this.price8,
+        required this.price9,
+        required this.price10,
       });
 }

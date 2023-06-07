@@ -2,10 +2,10 @@
 
 class Constss {
   static final List<String> offerImages = [
-    'assets/images/offres/1.jpg',
-    'assets/images/offres/2.jpg',
-    'assets/images/offres/3.jpg',
-    'assets/images/offres/1.jpg'
+    'assets/images/offres/6.jpeg',
+    'assets/images/offres/7.jpeg',
+    // 'assets/images/offres/9.jpeg',
+    'assets/images/offres/10.jpg'
   ];
   static List<String> authImagesPaths = [
     'assets/images/landing/buy-on-laptop.jpg',

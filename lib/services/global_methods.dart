@@ -13,6 +13,7 @@ class GlobalMethods {
     Navigator.pushNamed(ctx, routeName);
   }
 
+
   static Future<void> warningDialog({
     required String title,
     required String subtitle,
@@ -158,23 +159,54 @@ class GlobalMethods {
       {required String productId,
       required int quantity,
       required String details,
-      required BuildContext context}) async {
+
+        required double totalPrice,
+         String? extra1,extra2,extra3,extra4,extra5,extra6,extra8,extra7,extra9,extra10,
+        drink1,drink3,drink2,drink5,drink4,drink6,drink7,drink8,drink9,drink10,
+        required String productCategoryName,
+      required BuildContext context, }) async {
     final User? user = authInstance.currentUser;
     final _uid = user!.uid;
+    // final String typeRes = nameRes;
+    // if(nameRes==typeRes);
     final cartId = const Uuid().v4();
     try {
       FirebaseFirestore.instance.collection('users').doc(_uid).update({
         'userCart': FieldValue.arrayUnion([
           {
+            'productCategoryName':productCategoryName,
+            'totalPrice':totalPrice,
             'cartId': cartId,
             'productId': productId,
             'quantity': quantity,
             'details':details,
+            'extra1':extra1,
+            'extra2':extra2,
+            'extra3':extra3,
+            'extra4':extra4,
+            'extra5':extra5,
+            'extra6':extra6,
+            'extra7':extra7,
+            'extra8':extra8,
+            'extra9':extra9,
+            'extra10':extra10,
+            'drink1':drink1,
+            'drink2':drink2,
+            'drink3':drink3,
+            'drink4':drink4,
+            'drink5':drink5,
+            'drink6':drink6,
+            'drink7':drink7,
+            'drink8':drink8,
+            'drink9':drink9,
+            'drink10':drink10,
+
           }
         ])
       });
       await Fluttertoast.showToast(
-        msg: "Item has been added to your cart",
+        //Item has been added to your cart
+        msg: "Varan har lagts till i din kundvagn",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
@@ -198,7 +230,8 @@ class GlobalMethods {
         ])
       });
       await Fluttertoast.showToast(
-        msg: "Item has been added to your wishlist",
+        //Item has been added to your wishlist
+        msg: "Objektet har lagts till på din önskelista",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
@@ -206,4 +239,5 @@ class GlobalMethods {
       errorDialog(subtitle: error.toString(), context: context);
     }
   }
+
 }

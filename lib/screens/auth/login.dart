@@ -109,7 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 120.0,
                   ),
                   TextWidget(
-                    text: 'Welcome Back',
+                    //Welcome Back
+                    text: 'Välkommen tillbaka',
                     color: Colors.white,
                     textSize: 30,
                     isTitle: true,
@@ -118,7 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 8,
                   ),
                   TextWidget(
-                    text: "Sign in to continue",
+                    //Sign in to continue
+                    text: "Logga in för att fortsätta",
                     color: Colors.white,
                     textSize: 18,
                     isTitle: false,
@@ -138,7 +140,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
                               if (value!.isEmpty || !value.contains('@')) {
-                                return 'Please enter a valid email address';
+                                //Please enter a valid email address
+                                return 'Vänligen ange en giltig e-postadress';
                               } else {
                                 return null;
                               }
@@ -171,7 +174,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             keyboardType: TextInputType.visiblePassword,
                             validator: (value) {
                               if (value!.isEmpty || value.length < 7) {
-                                return 'Please enter a valid password';
+                                //Please enter a valid password
+                                return 'Var vänlig skriv in ett giltigt lösenord';
                               } else {
                                 return null;
                               }
@@ -190,7 +194,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         : Icons.visibility_off,
                                     color: Colors.white,
                                   )),
-                              hintText: 'Password',
+                              //Password
+                              hintText: 'Lösenord',
                               hintStyle: const TextStyle(color: Colors.white),
                               enabledBorder: const UnderlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
@@ -214,7 +219,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             routeName: ForgetPasswordScreen.routeName);
                       },
                       child: const Text(
-                        'Forget password?',
+                        //Forget password?
+                        'Glöm lösenord?',
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.lightBlue,
@@ -229,7 +235,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   AuthButton(
                     fct: _submitFormOnLogin,
-                    buttonText: 'Login',
+                    //Login
+                    buttonText: 'Logga in',
                   ),
                   const SizedBox(
                     height: 10,
@@ -250,7 +257,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 5,
                       ),
                       TextWidget(
-                        text: 'OR',
+                        //or
+                        text: 'arr',
                         color: Colors.white,
                         textSize: 18,
                       ),
@@ -276,7 +284,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       );
                     },
-                    buttonText: 'Continue as a guest',
+                    //Continue as a guest
+                    buttonText: 'Fortsätt som gäst',
                     primary: Colors.black,
                   ),
                   const SizedBox(
@@ -284,12 +293,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   RichText(
                       text: TextSpan(
-                          text: 'Don\'t have an account?',
+                        //Don\'t have an account?
+                          text: 'Har du inget konto?',
                           style: const TextStyle(
                               color: Colors.white, fontSize: 18),
                           children: [
                         TextSpan(
-                            text: '  Sign up',
+                          // Sign up
+                            text: ' Bli Medlem',
                             style: const TextStyle(
                                 color: Colors.lightBlue,
                                 fontSize: 18,

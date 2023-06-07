@@ -66,7 +66,7 @@ class _OnSaleResWidgetState extends State<OnSaleResWidget> {
                       
                       FancyShimmerImage(
                         imageUrl: productModel.imageUrl,
-                         height: size.width * 0.28,
+                         height: size.width * 0.40,
                          width: size.width*0.85 ,
                         boxFit: BoxFit.fill,
                       ),

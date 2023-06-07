@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../consts/contss.dart';
 import '../consts/theme_data.dart';
+import '../inner_screens/drawer_screen.dart';
 import '../inner_screens/feeds_screen.dart';
 import '../inner_screens/on_sale_screen.dart';
 import '../inner_screens/search_screen.dart';
@@ -68,10 +69,27 @@ class _HomeScreenState extends State<HomeScreen> {
     List<ResModel> resOnSale = productProviders.getOnSaleRes;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("H U N G R I G A",style: TextStyle(
-          fontWeight: FontWeight.bold
-        )),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(onPressed: (){}, icon: Icon(
+              Icons.fastfood,
+              size: 30,
+              color: Colors.white,
+            ),),
+            // Icon(
+            //   Icons.fastfood,
+            //   size: 30,
+            //   color: Colors.white,
+            // ),
+            const Text("H U N G R I G A",style: TextStyle(
+              fontWeight: FontWeight.bold
+            )),
+          ],
+        ),
         backgroundColor: primary,
+        elevation: 0.0,
+
         actions: [
 
           IconButton(
@@ -80,14 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
             return Badge(
             toAnimate: true,
             shape: BadgeShape.circle,
-            badgeColor: Colors.blue,
+            badgeColor: Colors.green,
             borderRadius: BorderRadius.circular(8),
             position: BadgePosition.topEnd(top: -7, end: -7),
             badgeContent: FittedBox(
             child: TextWidget(
             text: myCart.getCartItems.length.toString(),
             color: Colors.white,
-            textSize: 15)),
+            textSize: 14)),
             child: Icon(
            IconlyBold.buy ),);
             }),
@@ -103,68 +121,127 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+      drawer:
+      Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              decoration: BoxDecoration(
+                color: primary,
+              ),
+              accountName: Text(
+                'H U N G R I G A',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+              accountEmail: null,
+              currentAccountPicture: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  'assets/images/logo.jpeg',
+                  width: 120, // Adjust the width as per your requirement
+                  height: 120, // Adjust the height as per your requirement
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              //Complaints and suggestions
+              title: Text('Klagomål och förslag'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ComplaintsPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+
+        body: SingleChildScrollView(
         child: Column(
 
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                height: kBottomNavigationBarHeight,
-                child:
-                TextField(
-                  focusNode: _searchTextFocusNode,
-                  onEditingComplete:(){
-                    Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchResultPage(searchQuery: searchQuery),
-                    ),
-                  );
-                    },
-                  controller: _searchTextController,
-                  onChanged: (value) {
-                    setState(() {
-                      searchQuery = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                      const BorderSide(color: Colors.red, width: 1),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                      const BorderSide(color: primary, width: 1),
-                    ),
-                    hintText: "What's in your mind",
-                    prefixIcon: const Icon(Icons.search),
-                    suffix: IconButton(
-                      onPressed: () {
-                        _searchTextController!.clear();
-                        _searchTextFocusNode.unfocus();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SearchResultPage(searchQuery: searchQuery),
-                          ),
-                        );
+            Container(
+              decoration: BoxDecoration(borderRadius: BorderRadius.only(bottomRight: Radius.circular(8),bottomLeft:Radius.circular(8) ),
+                color: primary,
+              ),
+              // color: primary,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: kBottomNavigationBarHeight,
+                  child:
+                  TextField(
+
+
+                    focusNode: _searchTextFocusNode,
+                    style: TextStyle(color: Colors.grey),
+                    onEditingComplete:(){
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SearchResultPage(searchQuery: searchQuery),
+                      ),
+                    );
                       },
-                      icon: Icon(
-                        Icons.arrow_forward,
-                        color: _searchTextFocusNode.hasFocus ? Colors.red : color,
+                    controller: _searchTextController,
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(1),
+                        borderSide:
+                        const BorderSide(color: Colors.grey, width: 1),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(60),
+                        borderSide:
+                        const BorderSide(color: Colors.grey, width: 1),
+                      ),
+                      //What's in your mind
+                      hintText: "vad tänker du på",
+
+                      hintStyle: TextStyle(color: Colors.grey),
+                      prefixIcon: const Icon(Icons.search,color: Colors.grey),
+                      suffix: IconButton(
+                        onPressed: () {
+                          _searchTextController!.clear();
+                          _searchTextFocusNode.unfocus();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchResultPage(searchQuery: searchQuery),
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.arrow_forward,
+                          color: _searchTextFocusNode.hasFocus ? Colors.green : Colors.yellow,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
+            SizedBox(height: 20,),
 
             Container(
-              height: 200.0,
-              color: primary.withOpacity(0.8),// set the height of the container as per your requirement
+              height: 250,
+              color: Colors.white,// set the height of the container as per your requirement
               child: Row(
                 children: [
                   // Vertical image on the left
@@ -175,36 +252,40 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
                       child: Image.asset(
-                        'assets/images/5.jpg',
-                        fit: BoxFit.cover,
+                        'assets/images/11.jpeg',
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
                   // Two square images on the right
                   Expanded(
+
                     child: Column(
                       children: [
-                        Expanded(
+                        Flexible(
+                          flex: 4,
                           child: Container(
+
                             margin: EdgeInsets.all(5.0),
                             width: double.infinity,// add margin as per your requirement
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
                               child: Image.asset(
-                                'assets/images/6.jpg',
-                                fit: BoxFit.fitWidth,
+                                'assets/images/8.jpeg',
+                                fit: BoxFit.fill,
                               ),
                             ),
                           ),
                         ),
-                        Expanded(
+                        Flexible(
+                          flex:1,
                           child: Container(
                             margin: EdgeInsets.all(5.0),
                             width: double.infinity,// add margin as per your requirement
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
                               child: Image.asset(
-                                'assets/images/5.jpg',
+                                'assets/images/9.jpeg',
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -270,67 +351,67 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            const SizedBox(
-              height: 6,
-            ),
-            TextButton(
-              onPressed: () {
-                GlobalMethods.navigateTo(
-                    ctx: context, routeName: OnSaleScreen.routeName);
-              },
-              child: TextWidget(
-                text: 'View all',
-                maxLines: 1,
-                color:const Color(0Xff900C3F),
-                textSize: 20,
-              ),
-            ),
-            const SizedBox(
-              height: 6,
-            ),
-            Row(
-              children: [
-                RotatedBox(
-                  quarterTurns: -1,
-                  child: Row(
-                    children: [
-                      TextWidget(
-                        text: 'On sale'.toUpperCase(),
-                        color: primary,
-                        textSize: 22,
-                        isTitle: true,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Icon(
-                        IconlyLight.discount,
-                        color: primary,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Flexible(
-                  flex: 2,
-                  child: SizedBox(
-                    height: size.height * 0.33,
-                    child: ListView.builder(
-                        itemCount: productsOnSale.length < 10
-                            ? productsOnSale.length
-                            : 10,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (ctx, index) {
-                          return ChangeNotifierProvider.value(
-                              value: productsOnSale[index],
-                              child: const OnSaleWidget());
-                        }),
-                  ),
-                ),
-              ],
-            ),
+            // const SizedBox(
+            //   height: 6,
+            // ),
+            // TextButton(
+            //   onPressed: () {
+            //     GlobalMethods.navigateTo(
+            //         ctx: context, routeName: OnSaleScreen.routeName);
+            //   },
+            //   child: TextWidget(
+            //     text: 'View all',
+            //     maxLines: 1,
+            //     color:const Color(0Xff900C3F),
+            //     textSize: 20,
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 6,
+            // ),
+            // Row(
+            //   children: [
+            //     RotatedBox(
+            //       quarterTurns: -1,
+            //       child: Row(
+            //         children: [
+            //           TextWidget(
+            //             text: 'On sale'.toUpperCase(),
+            //             color: primary,
+            //             textSize: 22,
+            //             isTitle: true,
+            //           ),
+            //           const SizedBox(
+            //             width: 5,
+            //           ),
+            //           const Icon(
+            //             IconlyLight.discount,
+            //             color: primary,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //     const SizedBox(
+            //       width: 8,
+            //     ),
+            //     Flexible(
+            //       flex: 2,
+            //       child: SizedBox(
+            //         height: size.height * 0.33,
+            //         child: ListView.builder(
+            //             itemCount: productsOnSale.length < 10
+            //                 ? productsOnSale.length
+            //                 : 10,
+            //             scrollDirection: Axis.horizontal,
+            //             itemBuilder: (ctx, index) {
+            //               return ChangeNotifierProvider.value(
+            //                   value: productsOnSale[index],
+            //                   child: const OnSaleWidget());
+            //             }),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(
               height: 10,
             ),
@@ -340,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextWidget(
-                    text: 'Restaurants',
+                    text: 'Restauranger ',
                     color: color.withOpacity(0.7),
                     textSize: 22,
                     isTitle: true,
@@ -352,7 +433,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ctx: context, routeName: CategoriesScreen.routeName);
                     },
                     child: TextWidget(
-                      text: 'Browse all',
+                      //Browse all
+                      text: 'Bläddra bland alla',
                       maxLines: 1,
                       color: primary,
                       textSize: 20,
@@ -367,7 +449,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisCount: 1,
                padding: EdgeInsets.zero,
                crossAxisSpacing: 3,
-              childAspectRatio: size.width / (size.height * 0.22),
+              childAspectRatio: size.width / (size.height * 0.44),
               children: List.generate(
                   resOnSale.length < 4
                       ? resOnSale.length // length 3
