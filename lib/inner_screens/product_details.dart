@@ -279,11 +279,12 @@ class _ProductDetailsState extends State<ProductDetails> {
 
                           TextWidget(
                       //price
-                            text: 'pris: \$${usedPrice* int.parse(_quantityTextController.text)}',
+                            text: 'pris: ${usedPrice* int.parse(_quantityTextController.text)}',
                             color: Colors.green,
                             textSize: 22,
                             isTitle: true,
                           ),
+
                           // TextWidget(
                           //   text: getCurrProduct.isPiece ? '/Piece' : '/Kg',
                           //   color: color,
@@ -308,6 +309,16 @@ class _ProductDetailsState extends State<ProductDetails> {
 
 
                         ],
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextWidget(
+                        text: "Min. ordervarde 120,00 kr | 5.00 kr serviceavgift",
+                        color: color,
+                        textSize: 13,
+                        isTitle: false,
                       ),
                     ),
                     const SizedBox(height: 15,),
@@ -2643,7 +2654,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     children: [
                                       TextWidget(
                                         text:
-                                            '\$${totalPrice.toStringAsFixed(2)}',
+                                            '${totalPrice.toStringAsFixed(2)}',
                                         color: Colors.white,
                                         textSize: 20,
                                         isTitle: true,

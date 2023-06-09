@@ -18,9 +18,10 @@ import '../../services/global_methods.dart';
 import '../../services/utils.dart';
 import '../../widgets/empty_screen.dart';
 import '../../widgets/text_widget.dart';
+import '../btm_bar.dart';
 import '../payment/make_payment.dart';
 import 'cart_widget.dart';
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class CartScreen extends StatefulWidget {
   State<CartScreen> createState() => _CartScreenState();
 }
 
-final loc.Location location = loc.Location();
+// final loc.Location location = loc.Location();
 String? phoneNumber;
 
 class _CartScreenState extends State<CartScreen> {
@@ -52,12 +53,18 @@ class _CartScreenState extends State<CartScreen> {
     return cartItemsList.isEmpty
         ? Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: primary,
-
-        title: const Text("",style: TextStyle(
-            fontWeight: FontWeight.bold,color: Colors.white)),
-      ),
+          leading: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () =>
+            Navigator.canPop(context) ? Navigator.pop(context) : null,
+            child: Icon(
+              IconlyLight.arrowLeft2,
+              color: color,
+              size: 24,
+            ),
+          ),
+          elevation: 0,
+          backgroundColor: primary),
       body: const EmptyScreen(
         //Your cart is empty
         title: 'Din varukorg är tom',
@@ -73,6 +80,24 @@ class _CartScreenState extends State<CartScreen> {
             appBar: AppBar(
                 automaticallyImplyLeading: false,
                 elevation: 0,
+                leading: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: (){
+                    Navigator.of(context).push(
+
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => BottomBarScreen(
+                        ),
+                      ),
+                    );
+                  },
+
+                  child: Icon(
+                    IconlyLight.arrowLeft2,
+                    color: color,
+                    size: 24,
+                  ),
+                ),
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 title: TextWidget(
                   //Cart
@@ -117,8 +142,12 @@ class _CartScreenState extends State<CartScreen> {
                                       borderRadius: BorderRadius.circular(12.0),
                                       side: BorderSide(color: Colors.red)))),
                           onPressed: () {
+                            total>=120?
                             GlobalMethods.navigateTo(
-                                ctx: context, routeName: BackupOrDel.routeName);
+                                ctx: context, routeName: BackupOrDel.routeName):
+                                GlobalMethods.errorDialog(
+                                    subtitle: "Min. ordervarde 120,00 kr", context: context);
+
                           },
                           child: TextWidget(
                             //Order Now

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swish_payment/flutter_swish_payment.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 import '../../consts/theme_data.dart';
 import '../../services/utils.dart';
 import '../../widgets/back_widget.dart';

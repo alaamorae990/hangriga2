@@ -6,7 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hangry/screens/cart/cart_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 import '../../consts/firebase_consts.dart';
 import '../../fetch_screen.dart';
 import '../../providers/cart_provider.dart';

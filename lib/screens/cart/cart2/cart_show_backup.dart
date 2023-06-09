@@ -20,7 +20,7 @@ import '../../../widgets/text_widget.dart';
 import 'cart_show_backup_widget.dart';
 import 'cart_show_widger.dart';
 
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 
 class CartShowBackup extends StatefulWidget {
   const CartShowBackup({Key? key, required this.detiles, required this.time, required this.totalFood, required this.mous}) : super(key: key);
@@ -31,7 +31,7 @@ final double mous;
   State<CartShowBackup> createState() => _CartShowBackupState();
 }
 
-final loc.Location location = loc.Location();
+// final loc.Location location = loc.Location();
 String? phoneNumber;
 
 class _CartShowBackupState extends State<CartShowBackup> {

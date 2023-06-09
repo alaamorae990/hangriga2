@@ -760,7 +760,7 @@ class _MakePaymentDelivState extends State<MakePaymentDeliv> {
                       children: [
                         TextWidget(
                           //Food Bill is
-                            text: 'Food Bill är',
+                            text: 'Totalt',
                             color: color,
                             textSize: 18,
                             isTitle: true),

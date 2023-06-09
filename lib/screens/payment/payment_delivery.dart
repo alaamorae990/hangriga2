@@ -17,7 +17,7 @@ import '../../services/global_methods.dart';
 import '../../services/utils.dart';
 import '../cart/cart2/cart_show.dart';
 import 'PaypalServices.dart';
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 import '../../providers/cart_provider.dart';
 
 class PaypalPaymentDelivery extends StatefulWidget {

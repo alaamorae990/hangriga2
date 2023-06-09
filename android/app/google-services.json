@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:855172475327:android:2d62dbf17c96d5db0e190a",
         "android_client_info": {
-          "package_name": "com.example.hangry"
+          "package_name": "com.alaamorae.hangry"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "855172475327-913f6ta8biors3e1cboguqj4jeqg9okq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.hangry",
+            "package_name": "com.alaamorae.hangry",
             "certificate_hash": "73c63808cef4e8c31aad535f8108ba5702f0776f"
           }
         },

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -9,6 +10,7 @@ import 'package:hangry/providers/wishlist_provider.dart';
 import 'package:hangry/screens/btm_bar.dart';
 import 'package:hangry/screens/cart/cart2/cart_show.dart';
 import 'package:hangry/screens/cart/cart2/cart_show_backup.dart';
+import 'package:hangry/services/global_methods.dart';
 import 'package:provider/provider.dart';
 
 import 'consts/contss.dart';
@@ -42,35 +44,43 @@ class _FetchScreenState extends State<FetchScreen> {
           // Provider.of<OrdersProvider>(context, listen: false);
            Provider.of<DarkThemeProvider>(context, listen: false);
       final User? user = authInstance.currentUser;
-      if (user == null) {
-        await productsProvider.fetchProducts();
-        cartProvider.clearLocalCart();
-        await productsProvider.fetchResturant();
-        wishlistProvider.clearLocalWishlist();
-        // orderProvider.clearLocalOrder();
+      int update=0;
+      int version=1;
+      try {
 
-        
-      } else {
-        // await productsProvider.fetchOrder();
-        await productsProvider.fetchProducts();
-        await cartProvider.fetchCart();
-        await wishlistProvider.fetchWishlist();
-         await productsProvider.fetchResturant();
-         await productsProvider.fetchTax();
-          
+        final DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('update').doc("VFgsRsooySWxsxUHwHV7").get();
+        update = userDoc.get('update');
+      } catch (error) {
+        GlobalMethods.errorDialog(subtitle: '$error', context: context);
       }
+      if(update>version){
+        GlobalMethods.errorDialog(subtitle: "Applikationen måste uppdateras", context: context);
+      }
+      else {
+        if (user == null) {
+          await productsProvider.fetchProducts();
+          cartProvider.clearLocalCart();
+          await productsProvider.fetchResturant();
+          wishlistProvider.clearLocalWishlist();
+          // orderProvider.clearLocalOrder();
 
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (ctx) =>  BottomBarScreen(
-          // detiles: 'no more',
-          // time: '12.2',
-          //
-          // addrees: "nearto my house ",
-          //
-          // // selectedLocation: ,
 
-        ),
-      ));
+        } else {
+          // await productsProvider.fetchOrder();
+          await productsProvider.fetchProducts();
+          await cartProvider.fetchCart();
+          await wishlistProvider.fetchWishlist();
+          await productsProvider.fetchResturant();
+          await productsProvider.fetchTax();
+        }
+
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (ctx) =>
+              BottomBarScreen(
+              ),
+        ));
+      }
     });
     super.initState();
   }

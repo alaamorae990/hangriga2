@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swish_payment/flutter_swish_payment.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+// import 'package:location/location.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
@@ -15,7 +15,7 @@ import '../cart/cart2/cart_show.dart';
 import '../payment/make_payment_delivery.dart';
 import 'Services/location_services.dart';
 import 'Services/polyline_services.dart';
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 import 'package:google_maps_webservice/places.dart';
 class MapScreen extends StatefulWidget {
   final double long;
@@ -28,7 +28,7 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final loc.Location location = loc.Location();
+  // final loc.Location location = loc.Location();
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: Constants.apiKey);
   Completer<GoogleMapController> _controller = Completer();
   late CameraPosition _initialCameraPosition;
@@ -37,9 +37,12 @@ class _MapScreenState extends State<MapScreen> {
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
   Set<Circle> _circles = {};
-  final double zoneLatitude = 56.031510438310555; // Zone center latitude
-  final double zoneLongitude = 14.153970338463237; // Zone center longitude
-  final double zoneRadiusInMeters = 10000; // Zone radius in meters
+  // 56.03165430834974, 14.15422783068437
+  // final double zoneLatitude = 37.41575309724588; // Zone center latitude
+  // final double zoneLongitude = -122.08378862589596;
+  final double zoneLatitude = 56.03165430834974; // Zone center latitude
+  final double zoneLongitude =14.15422783068437; // Zone center longitude
+  final double zoneRadiusInMeters = 7000; // Zone radius in meters
   bool _isLoading = false;
   @override
   void initState() {
@@ -299,12 +302,12 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Future<void> _getMyLocation() async {
-    LocationData _myLocation = await LocationService().getLocation();
-    _animateCamera(
-      LatLng(_myLocation.latitude!, _myLocation.longitude!),
-    );
-  }
+  // Future<void> _getMyLocation() async {
+  //   LocationData _myLocation = await LocationService().getLocation();
+  //   _animateCamera(
+  //     LatLng(_myLocation.latitude!, _myLocation.longitude!),
+  //   );
+  // }
 
   Future<void> _animateCamera(LatLng _location) async {
     final GoogleMapController controller = await _controller.future;

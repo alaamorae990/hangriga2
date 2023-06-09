@@ -59,7 +59,7 @@ dependencies:
   google_maps_flutter: ^2.0.3
   flutter_google_places: ^0.3.0
   flutter_polyline_points: ^1.0.0
-  location: ^4.1.1
+#  location: ^4.1.1
   # cloud_firestore: ^2.5.1
   # firebase_core: ^1.6.0
   permission_handler: ^8.1.4+2

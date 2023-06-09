@@ -40,7 +40,7 @@ import 'screens/auth/register_phone.dart';
 import 'screens/btm_bar.dart';
 import 'screens/orders/orders_screen.dart';
 import 'screens/wishlist/wishlist_screen.dart';
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_swish_payment/flutter_swish_payment.dart';
@@ -173,7 +173,7 @@ class _MyAppState extends State<MyApp> {
                   theme: Styles.themeData(themeProvider.getDarkTheme, context),
                   home:    
                   // MapPage(),
-                  const FetchScreen(),
+                   FetchScreen(),
                   routes: {
                     OnSaleScreen.routeName: (ctx) => const OnSaleScreen(),
                     FeedsScreen.routeName: (ctx) => const FeedsScreen(),

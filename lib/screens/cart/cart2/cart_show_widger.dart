@@ -8,7 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hangry/consts/theme_data.dart';
 import 'package:hangry/screens/user.dart';
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 

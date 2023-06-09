@@ -28,7 +28,7 @@ import '../../widgets/text_widget.dart';
 import '../cart/cart2/cart_show.dart';
 import '../cart/cart2/cart_show_backup.dart';
 import '../cart/cart_screen.dart';
-import 'package:location/location.dart' as loc;
+// import 'package:location/location.dart' as loc;
 
 class makePayment extends StatefulWidget {
   final SwishClient swishClient;
@@ -40,7 +40,7 @@ class makePayment extends StatefulWidget {
   _makePaymentState createState() => _makePaymentState();
 }
 
-final loc.Location location = loc.Location();
+// final loc.Location location = loc.Location();
 
 class _makePaymentState extends State<makePayment> {
   DateTime? selectedTime;
