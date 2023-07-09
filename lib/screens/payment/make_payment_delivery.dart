@@ -26,6 +26,7 @@ import '../../widgets/back_widget.dart';
 import '../../widgets/text_widget.dart';
 import '../cart/cart2/cart_show.dart';
 import '../cart/cart_screen.dart';
+import '../cart/recaptcha_screen.dart';
 
 class MakePaymentDeliv extends StatefulWidget {
   final SwishClient swishClient;
@@ -69,7 +70,7 @@ class _MakePaymentDelivState extends State<MakePaymentDeliv> {
 
       total += value.totalPrice ;
     });
-
+    bool _isVerified = false;
     String mok = "";
     String delivery = "";
 
@@ -998,6 +999,17 @@ class _MakePaymentDelivState extends State<MakePaymentDeliv> {
                           ),
                           RaisedButton(
                             onPressed: () async {
+                              // final result = await Navigator.push<bool>(
+                              //   context,
+                              //   MaterialPageRoute(builder: (context) => RecaptchaScreen()),
+                              // );
+                              // if (result != null && result) {
+                              //   print("done");
+                              //   // Verification successful, proceed with customer creation or card update
+                              //   setState(() {
+                              //     _isVerified = true;
+                              //   });
+                              // }
                               try {
                                 await initPayment(
                                     amount: totalPricev * 100,

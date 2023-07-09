@@ -11,6 +11,7 @@ import '../inner_screens/drawer_screen.dart';
 import '../inner_screens/feeds_screen.dart';
 import '../inner_screens/on_sale_screen.dart';
 import '../inner_screens/search_screen.dart';
+import '../models/images_home_screen.dart';
 import '../models/products_model.dart';
 import '../models/res_model.dart';
 import '../providers/cart_provider.dart';
@@ -23,7 +24,9 @@ import '../widgets/on_sale_res_widget.dart';
 import '../widgets/on_sale_widget.dart';
 import '../widgets/text_widget.dart';
 import 'cart/cart_screen.dart';
+import 'cart/recaptcha_screen.dart';
 import 'categories.dart';
+import 'market_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -54,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     return ;
   }
+  // bool _isVerified = false;
   @override
   Widget build(BuildContext context) {
 
@@ -67,6 +71,42 @@ class _HomeScreenState extends State<HomeScreen> {
 
     List<ProductModel> productsOnSale = productProviders.getOnSaleProducts;
     List<ResModel> resOnSale = productProviders.getOnSaleRes;
+
+    final tax = productProviders.getImagesHome;
+
+    String imageUrltop = "";
+    tax.map((e) => imageUrltop = e.image1).toList();
+
+    String imageUrl2right = "";
+    tax.map((e) => imageUrl2right = e.image2).toList();
+
+    String imageUrl3left = "";
+    tax.map((e) => imageUrl3left = e.image3).toList();
+
+    String imageUrl4 = "";
+    tax.map((e) => imageUrl4 = e.image4).toList();
+
+    String imageUrl5 = "";
+    tax.map((e) => imageUrl5 = e.image5).toList();
+
+    String imageUrl6 = "";
+    tax.map((e) => imageUrl6 = e.image6).toList();
+
+    String imageUrl7 = "";
+    tax.map((e) => imageUrl7 = e.image7).toList();
+
+    String imageUrl8 = "";
+    tax.map((e) => imageUrl8 = e.image8).toList();
+
+    String imageUrl9 = "";
+    tax.map((e) => imageUrl9 = e.image9).toList();
+
+    final List<String> offerImages = [
+      imageUrl4,
+      imageUrl5,
+      imageUrl6,
+      imageUrl7
+    ];
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -240,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 20,),
 
             Container(
-              height: 250,
+              height: 300,
               color: Colors.white,// set the height of the container as per your requirement
               child: Row(
                 children: [
@@ -251,8 +291,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: double.infinity,// set the width of the container as per your requirement
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
-                      child: Image.asset(
-                        'assets/images/11.jpeg',
+                      child: Image.network(
+                        imageUrl3left == null
+                            ?
+                        'https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif'
+                            : imageUrl3left!,
+
+
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -270,23 +315,32 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: double.infinity,// add margin as per your requirement
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: Image.asset(
-                                'assets/images/8.jpeg',
+                              child: Image.network(
+                                imageUrltop == null
+                                    ?
+                                'https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif'
+                                    : imageUrltop!,
+
+
                                 fit: BoxFit.fill,
                               ),
                             ),
                           ),
                         ),
                         Flexible(
-                          flex:1,
+                          flex:4,
                           child: Container(
                             margin: EdgeInsets.all(5.0),
                             width: double.infinity,// add margin as per your requirement
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5.0),
-                              child: Image.asset(
-                                'assets/images/9.jpeg',
-                                fit: BoxFit.cover,
+                              child: Image.network(
+                                imageUrl2right == null
+                                    ?
+                                'https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif'
+                                    : imageUrl2right!,
+
+                                fit: BoxFit.fill,
                               ),
                             ),
                           ),
@@ -324,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             SizedBox(
-              height: size.height * 0.38,
+              height: size.height * 0.22,
 
               child: Container(
                 color:  Colors.white.withOpacity(0.8),
@@ -333,8 +387,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(50.0),
-                      child: Image.asset(
-                        Constss.offerImages[index],
+                      child: Image.network(
+                        offerImages[index] == null
+                            ?
+                        'https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif'
+                            : offerImages[index],
+
                         fit: BoxFit.cover,
 
 
@@ -342,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   autoplay: true,
-                  itemCount: Constss.offerImages.length,
+                  itemCount: offerImages.length,
                   pagination: const SwiperPagination(
                       alignment: Alignment.bottomCenter,
                       builder: DotSwiperPaginationBuilder(
@@ -415,51 +473,146 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(
               height: 10,
             ),
+            Divider(thickness: 3,color: primary,),
+            SizedBox(height: 10,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Colors.white,
+                  ),
+
+                  child: GestureDetector(
+                    //asoula is 2
+                    onTap: ()  {
+
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) =>  CategoriesScreen(),
+                      ));
+                    },
+                    child: Container(
+                      height:  MediaQuery.of(context).size.width * 0.40,
+                      width:  MediaQuery.of(context).size.width * 0.40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Image.network(
+                          imageUrl8 == null
+                              ?
+                          'https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif'
+                              : imageUrl8!,
+                          fit:BoxFit.fitHeight ),
+                    ),
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Colors.white,
+                  ),
+                  child: GestureDetector(
+                    onTap: ()  {
+                      //
+                      // Navigator.push<bool>(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => RecaptchaScreen()),
+                      // ).then((result) {
+                      //   if (result != null && result) {
+                      //     // Verification successful, proceed with customer creation or card update
+                      //     // Your code here
+                      //     print("done");
+                      //   }
+                      // });
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) =>  MarketScreen(),
+                      ));
+                    },
+                    child: Container(
+                      height:  MediaQuery.of(context).size.width * 0.40,
+                      width:  MediaQuery.of(context).size.width * 0.40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: Image.network(
+                          imageUrl9 == null
+                              ?
+                          'https://upload.wikimedia.org/wikipedia/commons/b/b9/Youtube_loading_symbol_1_(wobbly).gif'
+                              : imageUrl9!,
+                          fit:BoxFit.fitHeight ),
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+
                   TextWidget(
-                    text: 'Restauranger ',
-                    color: color.withOpacity(0.7),
-                    textSize: 22,
+                    text: "Restauranger",
+                    color: primary,
+                    textSize: 18,
                     isTitle: true,
                   ),
-                  // const Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      GlobalMethods.navigateTo(
-                          ctx: context, routeName: CategoriesScreen.routeName);
-                    },
-                    child: TextWidget(
-                      //Browse all
-                      text: 'Bläddra bland alla',
-                      maxLines: 1,
-                      color: primary,
-                      textSize: 20,
-                    ),
+                  TextWidget(
+                    text: "mataffär",
+                    color: primary,
+                    textSize: 18,
+                    isTitle: true,
                   ),
-                ],
-              ),
+                ],),
             ),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 1,
-               padding: EdgeInsets.zero,
-               crossAxisSpacing: 3,
-              childAspectRatio: size.width / (size.height * 0.44),
-              children: List.generate(
-                  resOnSale.length < 4
-                      ? resOnSale.length // length 3
-                      : 4, (index) {
-                return ChangeNotifierProvider.value(
-                  value: resOnSale[index],
-                  child: const OnSaleResWidget(),
-                );
-              }),
-            ),
+            SizedBox(height: 10,),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       TextWidget(
+            //         text: 'Restauranger ',
+            //         color: color.withOpacity(0.7),
+            //         textSize: 22,
+            //         isTitle: true,
+            //       ),
+            //       // const Spacer(),
+            //       TextButton(
+            //         onPressed: () {
+            //           GlobalMethods.navigateTo(
+            //               ctx: context, routeName: CategoriesScreen.routeName);
+            //         },
+            //         child: TextWidget(
+            //           //Browse all
+            //           text: 'Bläddra bland alla',
+            //           maxLines: 1,
+            //           color: primary,
+            //           textSize: 20,
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // GridView.count(
+            //   shrinkWrap: true,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   crossAxisCount: 1,
+            //    padding: EdgeInsets.zero,
+            //    crossAxisSpacing: 3,
+            //   childAspectRatio: size.width / (size.height * 0.44),
+            //   children: List.generate(
+            //       resOnSale.length < 4
+            //           ? resOnSale.length // length 3
+            //           : 4, (index) {
+            //     return ChangeNotifierProvider.value(
+            //       value: resOnSale[index],
+            //       child: const OnSaleResWidget(),
+            //     );
+            //   }),
+            // ),
           ],
         ),
       ),

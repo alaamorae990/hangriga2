@@ -11,6 +11,7 @@ import '../services/global_methods.dart';
 import '../services/utils.dart';
 import '../widgets/categories_widget.dart';
 import '../widgets/text_widget.dart';
+import 'btm_bar.dart';
 
 
 class CategoriesScreen extends StatefulWidget {
@@ -29,17 +30,29 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final utils = Utils(context);
     Color color = utils.color;
     return Scaffold(
+
         appBar: AppBar(
           elevation: 0,
           backgroundColor: primary,
-          
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (ctx) =>
+                    BottomBarScreen(
+                    ),
+              ));
+            },
+          ),
           title: const Text("Restauranger ",style: TextStyle(
           fontWeight: FontWeight.bold,color: Colors.white)),
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: StreamBuilder<QuerySnapshot>(
-             stream: FirebaseFirestore.instance.collection('resturants').snapshots(),
+             stream: FirebaseFirestore.instance.collection('resturants').
+             where('isOnSale',isEqualTo:false )
+             .snapshots(),
             builder: (context, snapshots) {
               return (snapshots.connectionState == ConnectionState.waiting)
                   ? const Center(

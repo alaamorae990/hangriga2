@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hangry/models/tax_model.dart';
 
+import '../models/images_home_screen.dart';
 import '../models/orders_model.dart';
 import '../models/products_model.dart';
 import '../models/res_model.dart';
@@ -11,6 +12,11 @@ class ProductsProvider with ChangeNotifier {
   static List<ProductModel> _productsList = [];
   static List<OrderModel> _orderList = [];
   static List<TaxModel> _TaxList = [];
+  static List<HomeImages> _imagesList = [];
+
+  List<HomeImages> get getImagesHome {
+    return _imagesList;
+  }
 
   List<TaxModel> get getTax {
     return _TaxList;
@@ -34,6 +40,33 @@ class ProductsProvider with ChangeNotifier {
 
   List<ResModel> get getOnSaleRes {
     return _resturantsList.where((element) => element.isOnSale).toList();
+  }
+
+  Future<void> fetchImagesHome() async {
+    await FirebaseFirestore.instance
+        .collection('images')
+        .get()
+        .then((QuerySnapshot HomeImagesSnapshot) {
+      _imagesList = [];
+      HomeImagesSnapshot.docs.forEach((element) {
+        _imagesList.insert(
+            0,
+            HomeImages(
+              image1:  element.get('image1'),
+              image2:  element.get('image2'),
+              image3: element.get('image3'),
+              image4: element.get('image4'),
+              image5: element.get('image5'),
+              image6: element.get('image6'),
+              image7: element.get('image7'),
+              image8:element.get('image8'),
+              image9: element.get('image9'),
+
+
+            ));
+      });
+    });
+    notifyListeners();
   }
 
   Future<void> fetchOrder() async {
